@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Flowly.Core\Flowly.Core.csproj" />
+    <ProjectReference Include="..\Flowly.ExtensionSource.NuGet\Flowly.ExtensionSource.NuGet.csproj" />
+    <ProjectReference Include="..\Flowly.WorkflowSource.Json\Flowly.WorkflowSource.Json.csproj" />
+    <ProjectReference Include="..\Flowly.WorkflowSource.Yaml\Flowly.WorkflowSource.Yaml.csproj" />
+  </ItemGroup>
+
+</Project>
