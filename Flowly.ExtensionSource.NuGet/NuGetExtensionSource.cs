@@ -1,15 +1,26 @@
-﻿using Flowly.Core.Interfaces;
-using System;
+﻿using Flowly.Core.Providers;
+using NuGet.Configuration;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Flowly.ExtensionSource.NuGet
 {
     public class NuGetExtensionSource : IExtensionSource
     {
-        public IExtensionProvider Build()
+        static PackageSource[] DefaultPackageSources = new[]
         {
-            throw new NotImplementedException();
+            new PackageSource("https://api.nuget.org/v3/index.json")
+        };
+
+        public List<PackageSource> PackageSources { get; set; } = new List<PackageSource>();
+
+
+        public IExtensionProvider BuildProvider()
+        {
+            var sources = new List<PackageSource>();
+            sources.AddRange(DefaultPackageSources);
+            sources.AddRange(PackageSources);
+
+            return new NuGetExtensionProvider(sources.ToArray());
         }
     }
 }

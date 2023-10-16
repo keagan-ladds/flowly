@@ -1,7 +1,7 @@
 ﻿using Flowly.Core.Definitions;
 using System.Threading.Tasks;
 
-namespace Flowly.Core.Interfaces
+namespace Flowly.Core.Providers
 {
     public interface IWorkflowProvider
     {

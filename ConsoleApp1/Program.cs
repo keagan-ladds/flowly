@@ -16,15 +16,25 @@ var extensions = new[]
     }
 };
 
-await new NuGetExtensionProvider().LoadExtensions(extensions);
+//await new NuGetExtensionProvider().LoadExtensions(extensions);
 
 var builder = new WorkflowBuilder();
 var job = builder
-    //.FromJsonFile(@"C:\Users\ladds\source\repos\Flowly\ConsoleApp1\workflow-1.json")
-    .FromYamlFile(@"C:\Users\ladds\source\repos\Flowly\ConsoleApp1\workflow-1.yaml")
+    .FromYamlFile(@"workflow-1.yaml")
     .Build();
 
 
-var runner = new WorkflowRunner(job);
-await runner.RunAsync();
+var extensionSource = new NuGetExtensionSource
+{
+    PackageSources = new List<NuGet.Configuration.PackageSource>
+    {
+        new NuGet.Configuration.PackageSource(@"C:\Users\ladds\source\repos\keagan-ladds\flowly\Flowly.Extension.Example\bin\Debug")
+    }
+};
+
+var runner = new RunnerBuilder()
+                .WithExtensionSource(extensionSource)
+                .Build();
+
+await runner.RunAsync(job);
 int x = 0;

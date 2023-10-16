@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Flowly.Core.Interfaces
+namespace Flowly.Core.Providers
 {
     public interface IExtensionSource
     {
-        IExtensionProvider Build();
+        IExtensionProvider BuildProvider();
     }
 }

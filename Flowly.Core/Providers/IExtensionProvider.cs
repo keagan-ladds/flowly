@@ -1,14 +1,12 @@
 ﻿using Flowly.Core.Definitions;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Flowly.Core.Interfaces
+namespace Flowly.Core.Providers
 {
     public interface IExtensionProvider
     {
         Task LoadAsync(ExtensionDefinition[] extensions);
-        Type? ResolveType(string typeName);
+        bool TryResolveType(string name, out Type type);
     }
 }

@@ -6,6 +6,7 @@ namespace Flowly.Core
 {
     public class WorkflowContext
     {
-        public string WorkingDirectory { get; private set; }
+        public string WorkingDirectory { get; internal set; }
+
     }
 }

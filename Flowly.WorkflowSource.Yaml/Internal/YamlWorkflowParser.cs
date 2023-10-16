@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using YamlDotNet;
 using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace Flowly.WorkflowSource.Yaml.Internal
 {
@@ -14,7 +15,10 @@ namespace Flowly.WorkflowSource.Yaml.Internal
 
         public YamlWorkflowParser()
         {
-            _deserializer = new DeserializerBuilder().Build();
+            _deserializer = new DeserializerBuilder()
+                .IgnoreUnmatchedProperties()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build();
         }
 
         public WorkflowDefinition Parse(Stream stream)

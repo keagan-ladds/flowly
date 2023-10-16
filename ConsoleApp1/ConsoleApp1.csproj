@@ -14,4 +14,10 @@
     <ProjectReference Include="..\Flowly.WorkflowSource.Yaml\Flowly.WorkflowSource.Yaml.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="workflow-1.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

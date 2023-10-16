@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Dynamic;
 
 namespace Flowly.Core.Definitions
@@ -11,7 +10,7 @@ namespace Flowly.Core.Definitions
         public ExpandoObject? Options { get; set; }
         public bool ContinueOnError { get; set; } = false;
         virtual internal Type? TypeHint { get; set; }
-        internal object? ObjectInstance { get; set; }
+        internal object? OptionsInstance { get; set; }
     }
 
     public class WorkflowStepDefinition<TJobStep> : WorkflowStepDefinition

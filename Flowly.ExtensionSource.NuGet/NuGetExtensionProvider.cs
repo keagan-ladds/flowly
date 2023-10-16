@@ -1,5 +1,4 @@
 ﻿using Flowly.Core.Definitions;
-using Flowly.Core.Interfaces;
 using Microsoft.Extensions.DependencyModel;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -14,29 +13,32 @@ using Flowly.ExtensionSource.NuGet.Internal;
 using System.Reflection;
 using System.Linq;
 using Flowly.Core;
+using Flowly.Core.Providers;
 
 namespace Flowly.ExtensionSource.NuGet
 {
     public class NuGetExtensionProvider : IExtensionProvider
     {
+        private readonly PackageSource[] _packageSources;
 
-        public static PackageSource[] DefaultPackageSources = new[]
+        public NuGetExtensionProvider(PackageSource[] packageSources)
         {
-            new PackageSource("https://api.nuget.org/v3/index.json"),
-            new PackageSource(@"C:\Users\ladds\source\repos\Flowly\Flowly.Extension.Example\bin\Debug"),
-        };
+            _packageSources = packageSources;
+        }
 
         private readonly Dictionary<string, Type> _availableExtensionTypes = new Dictionary<string, Type>();
+
+
 
         public Task LoadAsync(ExtensionDefinition[] extensions)
         {
             return LoadExtensions(extensions);
         }
 
-        public async Task LoadExtensions(ExtensionDefinition[] extensions)
+        private async Task LoadExtensions(ExtensionDefinition[] extensions)
         {
             // Define a source provider, with the main NuGet feed, plus my own feed.
-            var sourceProvider = new PackageSourceProvider(NullSettings.Instance, DefaultPackageSources);
+            var sourceProvider = new PackageSourceProvider(NullSettings.Instance, _packageSources);
 
 
             // Establish the source repository provider; the available providers come from our custom settings.
@@ -87,21 +89,18 @@ namespace Flowly.ExtensionSource.NuGet
                 var assembly = Assembly.LoadFrom(assemblyPath);
                 var exts = assembly.GetTypes().Where(_ => _.IsSubclassOf(typeof(WorkflowStep))).ToList();
                 foreach(var ext in exts) {
-                    _availableExtensionTypes.TryAdd(ext.Name, ext);
+                    _availableExtensionTypes.TryAdd(ext.FullName, ext);
                 }
 
             }
-            
-            int x = 0;
-
         }
 
-        public Type? ResolveType(string typeName)
+        public bool TryResolveType(string name, out Type type)
         {
-            if (_availableExtensionTypes.TryGetValue(typeName, out var type))
-                return type;
+            if (_availableExtensionTypes.TryGetValue(name, out type))
+                return true;
 
-            return null;
+            return false;
         }
     }
 }

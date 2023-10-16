@@ -39,6 +39,23 @@ namespace Flowly.Core.Internal
             return Convert.ChangeType(instance, type);
         }
 
+        public static bool IsInstanceOfGenericType(this Type type, Type baseType, out Type typedJobStep)
+        {
+            typedJobStep = null;
+
+            while (type != null)
+            {
+                if (type.IsGenericType &&
+                    type.GetGenericTypeDefinition() == baseType)
+                {
+                    typedJobStep = type;
+                    return true;
+                }
+                type = type.BaseType;
+            }
+            return false;
+        }
+
         public static void Map(ExpandoObject source, object destination)
         {
             source = source ?? throw new ArgumentNullException(nameof(source));

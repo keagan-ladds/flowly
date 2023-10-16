@@ -1,5 +1,4 @@
 ﻿using Flowly.Core.Definitions;
-using Flowly.Core.Interfaces;
 using Flowly.Core.Providers;
 using System;
 using System.Collections.Generic;
@@ -23,16 +22,6 @@ namespace Flowly.Core.Builders
             return this;
         }
 
-        public WorkflowBuilder SetWorkingDirectory(string path)
-        {
-            _builderActions.Add(workflow =>
-            {
-                workflow.WorkingDirectory = path;
-            });
-            
-            return this;
-        }
-
         public WorkflowBuilder AddStep<TStep>(string? name = default) where TStep : WorkflowStep
         {
             _builderActions.Add(workflow =>
@@ -51,7 +40,7 @@ namespace Flowly.Core.Builders
             _builderActions.Add(workflow =>
             {
                 var step = new WorkflowStepDefinition<TStep>(name);
-                step.ObjectInstance = options;
+                step.OptionsInstance = options;
 
                 workflow.Steps.Add(step);
             });
@@ -69,7 +58,7 @@ namespace Flowly.Core.Builders
                 action(options);
 
                 var step = new WorkflowStepDefinition<TStep>(name);
-                step.ObjectInstance = options;
+                step.OptionsInstance = options;
 
                 workflow.Steps.Add(step);
             });
