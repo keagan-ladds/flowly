@@ -69,7 +69,7 @@ stages:
       - job: 
         pool: 
             vmImage: ubuntu-latest
-        displayName: Publish
+        displayName: Publish to local feed
         steps:
         - task: DownloadBuildArtifacts@1
           inputs:
@@ -77,3 +77,10 @@ stages:
             downloadType: 'single'
             artifactName: 'packages'
             downloadPath: '$(System.ArtifactsDirectory)'
+
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'push'
+            packagesToPush: '$(System.ArtifactsDirectory)/*.nupkg'
+            nuGetFeedType: 'internal'
+            publishVstsFeed: 'f9a3ba6c-3ffc-42f5-9f8a-30e9c233099f'
