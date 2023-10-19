@@ -1,0 +1,57 @@
+trigger:
+ branches:
+    include:
+    - main
+    - r/*
+ paths:
+    include:
+      - src/tools
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/r/')]
+  sourceVersion: $(Build.SourceVersion)
+  buildRevision: $[counter(variables['Build.SourceVersion'], 0)]
+
+stages:
+  - stage: Prepare
+    jobs:
+    - job:
+      pool: 
+        vmImage: ubuntu-latest
+      steps:
+        - bash: |
+            short_hash=`git rev-parse --short=8 HEAD`
+            echo "##vso[build.updatebuildnumber]0.0.0.0-$short_hash.b$(buildRevision)"
+          workingDirectory: $(Build.SourcesDirectory)
+          displayName: Set Non-Release Build Number
+          condition: eq(variables.isRelease, false)
+
+  - stage: Build
+    jobs:
+    - job:
+      displayName: Build
+      pool: 
+        vmImage: ubuntu-latest
+      steps:
+      - task: DotNetCoreCLI@2
+        inputs:
+            command: 'restore'
+            projects: '**/tools/**/*.csproj'
+            feedsToUse: 'select'
+            
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'publish'
+          publishWebProjects: false
+          projects: '**/tools/**/*.csproj'
+          arguments: '-p:PublishSingleFile=true --self-contained true'
+          zipAfterPublish: false
+            
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'tools'
+          publishLocation: 'Container'
