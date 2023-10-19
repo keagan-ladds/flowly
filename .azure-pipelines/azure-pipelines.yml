@@ -17,8 +17,8 @@ pool:
 
 variables:
   isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/r/')]
-
-
+  sourceVersion: $(Build.SourceVersion)
+  buildRevision: $[counter(variables['Build.SourceVersion'], 0)]
 
 stages:
   - stage: Prepare
@@ -40,9 +40,7 @@ stages:
       displayName: Build
       pool: 
         vmImage: ubuntu-latest
-    
       steps:
-
       - task: DotNetCoreCLI@2
         inputs:
             command: 'restore'
@@ -59,11 +57,23 @@ stages:
             command: 'pack'
             packagesToPack: '**/libraries/**/*.csproj'
             versioningScheme: 'byBuildNumber'
-        
-      - task: DotNetCoreCLI@2
+      - task: PublishBuildArtifacts@1
         inputs:
-          command: 'push'
-          packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-          nuGetFeedType: 'internal'
-          publishVstsFeed: 'f9a3ba6c-3ffc-42f5-9f8a-30e9c233099f'
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'packages'
+          publishLocation: 'Container'
 
+  - stage: Deploy
+    displayName: Deploy
+    jobs:
+      - job: 
+        pool: 
+            vmImage: ubuntu-latest
+        displayName: Publish
+        steps:
+        - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'packages'
+            downloadPath: '$(System.ArtifactsDirectory)'
