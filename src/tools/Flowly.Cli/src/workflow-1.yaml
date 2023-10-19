@@ -1,0 +1,12 @@
+extensions:
+- package: Flowly.Extension.Example
+  version: 1.0.0
+variables:
+  Test: ${test}
+steps:
+- name: Step 1
+  type: Flowly.Extension.Example.ExampleStep
+  continueOnError: true
+  options:
+    x: 123
+    y: Test
