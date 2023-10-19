@@ -52,8 +52,9 @@ stages:
             
       - task: CopyFiles@2
         inputs:
-          Contents: '**/*.exe'
+          Contents: '**/win-x64/publish/*.exe'
           TargetFolder: '$(Build.ArtifactStagingDirectory)/win-x64'
+          flattenFolders: true
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
