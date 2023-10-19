@@ -33,18 +33,18 @@ stages:
       - task: DotNetCoreCLI@2
         inputs:
             command: 'restore'
-            projects: '**/*.sln'
+            projects: '**/*.csproj'
             feedsToUse: 'select'
             
       - task: DotNetCoreCLI@2
         inputs:
             command: 'build'
-            projects: '**/*.sln'
+            projects: '**/*.csproj'
             
       - task: DotNetCoreCLI@2
         inputs:
             command: 'pack'
-            packagesToPack: '**/*.sln'
+            packagesToPack: '**/*.csproj'
             versioningScheme: 'byBuildNumber'
         
       - task: DotNetCoreCLI@2
