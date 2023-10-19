@@ -21,6 +21,19 @@ variables:
 
 
 stages:
+  - stage: Prepare
+    jobs:
+    - job:
+      pool: 
+        vmImage: ubuntu-latest
+      steps:
+        - bash: |
+            short_hash=`git rev-parse --short=8 HEAD`
+            echo "##vso[build.updatebuildnumber]0.0.0.0-$short_hash.b$(buildRevision)"
+          workingDirectory: $(Build.SourcesDirectory)
+          displayName: Set Non-Release Build Number
+          condition: eq(variables.isRelease, false)
+
   - stage: Build
     jobs:
     - job:
