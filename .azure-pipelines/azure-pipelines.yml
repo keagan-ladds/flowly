@@ -7,45 +7,54 @@ trigger:
  branches:
     include:
     - main
+    - r/*
  paths:
     include:
       - src/libraries
 
-
 pool:
-  vmImage: 'ubuntu'
+  vmImage: ubuntu-latest
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/r/')]
 
-steps:
-   
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
 
-- task: DotNetCoreCLI@2
-  inputs:
-      command: 'restore'
-      projects: '**/*.csproj'
-      feedsToUse: 'select'
-      
-- task: DotNetCoreCLI@2
-  inputs:
-      command: 'build'
-      projects: '**/*.csproj'
-      
-- task: DotNetCoreCLI@2
-  inputs:
-      command: 'pack'
-      packagesToPack: '**/*.csproj'
-      versioningScheme: 'byBuildNumber'
-  
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: 'f9a3ba6c-3ffc-42f5-9f8a-30e9c233099f'
+
+stages:
+  - stage: Build
+    jobs:
+    - job:
+      displayName: Build
+      pool: 
+        vmImage: ubuntu-latest
+    
+      steps:
+        
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'build'
+
+      - task: DotNetCoreCLI@2
+        inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+            feedsToUse: 'select'
+            
+      - task: DotNetCoreCLI@2
+        inputs:
+            command: 'build'
+            projects: '**/*.csproj'
+            
+      - task: DotNetCoreCLI@2
+        inputs:
+            command: 'pack'
+            packagesToPack: '**/*.csproj'
+            versioningScheme: 'byBuildNumber'
+        
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'push'
+          packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+          nuGetFeedType: 'internal'
+          publishVstsFeed: 'f9a3ba6c-3ffc-42f5-9f8a-30e9c233099f'
+
