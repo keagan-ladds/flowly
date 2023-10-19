@@ -8,6 +8,9 @@ namespace ConsoleApp1
         {
             var test = Options.Y;
             var test2 = 0;
+            var test3 = Context.Variables.GetValue<string>("Test");
+            var test4 = Variables;
+            Console.WriteLine("Value of test3 is {0}", test3);
             return ValueTask.CompletedTask;
         }
     }

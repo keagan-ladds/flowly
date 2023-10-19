@@ -1,7 +1,8 @@
 extensions:
 - package: Flowly.Extension.Example
+  version: 1.0.0
 variables:
-  Wowo J: keagan
+  Test: ${test}
 steps:
 - name: Step 1
   type: Flowly.Extension.Example.ExampleStep

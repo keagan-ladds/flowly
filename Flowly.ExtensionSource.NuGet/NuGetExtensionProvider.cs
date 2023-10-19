@@ -20,26 +20,40 @@ namespace Flowly.ExtensionSource.NuGet
     public class NuGetExtensionProvider : IExtensionProvider
     {
         private readonly PackageSource[] _packageSources;
-
-        public NuGetExtensionProvider(PackageSource[] packageSources)
-        {
-            _packageSources = packageSources;
-        }
-
         private readonly Dictionary<string, Type> _availableExtensionTypes = new Dictionary<string, Type>();
 
+        public string BaseDirectory { get; private set; }
 
+        public NuGetExtensionProvider(PackageSource[] packageSources, string baseDirectory)
+        {
+            _packageSources = packageSources;
+            BaseDirectory = baseDirectory;
+        }
 
         public Task LoadAsync(ExtensionDefinition[] extensions)
         {
             return LoadExtensions(extensions);
         }
 
+        private ISettings GetSettings()
+        {
+            string configFileName = "nuget.config";
+            string configFilePath = Path.Combine(BaseDirectory, configFileName);
+
+            if (File.Exists(configFilePath))
+            {
+                return Settings.LoadSpecificSettings(BaseDirectory, configFileName);
+            }
+
+            return NullSettings.Instance;
+        }
+
         private async Task LoadExtensions(ExtensionDefinition[] extensions)
         {
-            // Define a source provider, with the main NuGet feed, plus my own feed.
-            var sourceProvider = new PackageSourceProvider(NullSettings.Instance, _packageSources);
+            var settings = GetSettings();
 
+            // Define a source provider, with the main NuGet feed, plus my own feed.
+            var sourceProvider = new PackageSourceProvider(settings, _packageSources);
 
             // Establish the source repository provider; the available providers come from our custom settings.
             var sourceRepositoryProvider = new SourceRepositoryProvider(sourceProvider, Repository.Provider.GetCoreV3());
@@ -52,8 +66,6 @@ namespace Flowly.ExtensionSource.NuGet
 
             // You should use an actual logger here, this is a NuGet ILogger instance.
             var logger = new NullLogger();
-
-
 
             // Replace this with a proper cancellation token.
             var cancellationToken = CancellationToken.None;
@@ -80,7 +92,7 @@ namespace Flowly.ExtensionSource.NuGet
 
             // Where do we want to install our packages?
             // For now we'll pop them in the .extensions folder.
-            var packageDirectory = Path.Combine(Environment.CurrentDirectory, ".extensions");
+            var packageDirectory = Path.Combine(BaseDirectory, "extensions");
             var nugetSettings = Settings.LoadDefaultSettings(packageDirectory);
 
             var assemblies = await NuGetExtensionResolver.InstallPackages(sourceCacheContext, logger, packagesToInstall, packageDirectory, nugetSettings, cancellationToken);

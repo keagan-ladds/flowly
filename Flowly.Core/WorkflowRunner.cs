@@ -1,5 +1,4 @@
 ﻿using Flowly.Core.Definitions;
-using Flowly.Core.Exceptions;
 using Flowly.Core.Internal;
 using Flowly.Core.Providers;
 using System;
@@ -19,10 +18,7 @@ namespace Flowly.Core
 
         public async Task RunAsync(WorkflowDefinition workflow)
         {
-            var context = new WorkflowContext()
-            {
-                WorkingDirectory = WorkingDirectory,
-            };
+            var context = new WorkflowContext(WorkingDirectory, workflow.Variables);
 
             var typeResolver = TypeResolver ?? new ReflectionTypeResolver();
             var stepFactory = WorfklowStepFactory ?? new WorfklowStepFactory();
@@ -41,20 +37,26 @@ namespace Flowly.Core
 
             foreach(var step in workflow.Steps)
             {
+                var stepInstance = stepFactory.CreateInstance(step, typeResolver);
+                stepInstance.Variables = new WorkflowVariables(step.Variables);
+                stepInstance.ContinueOnError = step.ContinueOnError;
+                context.AddStep(stepInstance);
+            }
+
+            foreach(var step in context.Steps)
+            {
                 try
                 {
-                    var stepInstance = stepFactory.CreateInstance(step, typeResolver);
-                    stepInstance.SetContext(context);
-                    await stepInstance.ExecuteAsync();
-                }
-                catch (StepActivatorException)
-                {
-                    throw;
+                    await step.ExecuteAsync();
+                    step.Successful = true;
                 }
                 catch(Exception)
                 {
                     if (!step.ContinueOnError)
                         throw;
+                }
+                finally { 
+                    step.Executed = true;
                 }
             }
         }

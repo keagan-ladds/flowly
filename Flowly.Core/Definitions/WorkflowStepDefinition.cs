@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 
 namespace Flowly.Core.Definitions
@@ -8,6 +9,7 @@ namespace Flowly.Core.Definitions
         public string Type { get; set; }
         public string Name { get; set; }
         public ExpandoObject? Options { get; set; }
+        public Dictionary<string, object> Variables { get; set; }
         public bool ContinueOnError { get; set; } = false;
         virtual internal Type? TypeHint { get; set; }
         internal object? OptionsInstance { get; set; }

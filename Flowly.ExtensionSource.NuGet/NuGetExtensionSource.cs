@@ -1,6 +1,7 @@
 ﻿using Flowly.Core.Providers;
 using NuGet.Configuration;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Flowly.ExtensionSource.NuGet
 {
@@ -13,14 +14,18 @@ namespace Flowly.ExtensionSource.NuGet
 
         public List<PackageSource> PackageSources { get; set; } = new List<PackageSource>();
 
+        public string? BaseDirectory { get; set; }
+
 
         public IExtensionProvider BuildProvider()
         {
+            var baseDirectory = BaseDirectory ?? Directory.GetCurrentDirectory();
+
             var sources = new List<PackageSource>();
             sources.AddRange(DefaultPackageSources);
             sources.AddRange(PackageSources);
 
-            return new NuGetExtensionProvider(sources.ToArray());
+            return new NuGetExtensionProvider(sources.ToArray(), baseDirectory);
         }
     }
 }

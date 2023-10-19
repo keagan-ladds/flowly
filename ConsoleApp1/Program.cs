@@ -8,19 +8,11 @@ using Flowly.ExtensionSource.NuGet;
 using Flowly.WorkflowSource.Extensions;
 
 
-var extensions = new[]
-{
-    new ExtensionDefinition
-    {
-        Package = "Flowly.Extension.Example"
-    }
-};
-
-//await new NuGetExtensionProvider().LoadExtensions(extensions);
 
 var builder = new WorkflowBuilder();
 var job = builder
     .FromYamlFile(@"workflow-1.yaml")
+    //.SetVariable("Test", "This is really cool")
     .Build();
 
 

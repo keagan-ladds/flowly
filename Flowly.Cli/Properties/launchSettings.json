@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Flowly.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "-f workflow-1.yaml -s C:\\Users\\ladds\\source\\repos\\keagan-ladds\\flowly\\Flowly.Extension.Example\\bin\\Debug"
+    }
+  }
+}
