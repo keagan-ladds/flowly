@@ -50,6 +50,10 @@ stages:
           arguments: '-p:PublishSingleFile=true --self-contained true'
           zipAfterPublish: false
             
+      - task: CopyFiles@2
+        inputs:
+          Contents: '**/*.exe'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)/win-x64'
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
