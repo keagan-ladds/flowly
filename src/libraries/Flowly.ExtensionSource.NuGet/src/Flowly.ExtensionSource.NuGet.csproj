@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Flowly.Core\Flowly.Core.csproj" />
+    <ProjectReference Include="..\..\Flowly.Core\src\Flowly.Core.csproj" />
   </ItemGroup>
 
 </Project>

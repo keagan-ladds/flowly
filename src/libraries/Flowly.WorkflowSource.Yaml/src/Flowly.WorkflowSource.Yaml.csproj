@@ -6,7 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Flowly.Core\Flowly.Core.csproj" />
+    <PackageReference Include="YamlDotNet" Version="13.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Flowly.Core\src\Flowly.Core.csproj" />
   </ItemGroup>
 
 </Project>

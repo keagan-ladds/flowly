@@ -16,9 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Flowly.Core\Flowly.Core.csproj" />
-    <ProjectReference Include="..\Flowly.ExtensionSource.NuGet\Flowly.ExtensionSource.NuGet.csproj" />
-    <ProjectReference Include="..\Flowly.WorkflowSource.Yaml\Flowly.WorkflowSource.Yaml.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.Core\src\Flowly.Core.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.ExtensionSource.NuGet\src\Flowly.ExtensionSource.NuGet.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.WorkflowSource.Yaml\src\Flowly.WorkflowSource.Yaml.csproj" />
   </ItemGroup>
 
   <ItemGroup>
