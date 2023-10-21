@@ -205,6 +205,9 @@ namespace Flowly.ExtensionSource.NuGet.Internal
             if (dep.Id == "Flowly.Core")
                 return true;
 
+            if (hostDependencies == null)
+                return false;
+
             // See if a runtime library with the same ID as the package is available in the host's runtime libraries.
             var runtimeLib = hostDependencies.RuntimeLibraries.FirstOrDefault(r => r.Name == dep.Id);
 
