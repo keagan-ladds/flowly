@@ -24,7 +24,7 @@ stages:
       steps:
         - bash: |
             short_hash=`git rev-parse --short=8 HEAD`
-            echo "##vso[build.updatebuildnumber]0.0.0.0-$short_hash.b$(buildRevision)"
+            echo "##vso[build.updatebuildnumber]1.0.0.$(buildRevision)-dev.$short_hash"
           workingDirectory: $(Build.SourcesDirectory)
           displayName: Set Non-Release Build Number
           condition: eq(variables.isRelease, false)
@@ -47,7 +47,7 @@ stages:
           command: 'publish'
           publishWebProjects: false
           projects: '**/tools/**/*.csproj'
-          arguments: '-p:PublishSingleFile=true --self-contained true'
+          arguments: '-p:PublishSingleFile=true --self-contained true /p:Version=$(Build.BuildNumber)'
           zipAfterPublish: false
             
       - task: CopyFiles@2
