@@ -54,9 +54,10 @@ stages:
             
       - task: DotNetCoreCLI@2
         inputs:
-            command: 'pack'
-            packagesToPack: '**/libraries/**/*.csproj'
-            versioningScheme: 'byBuildNumber'
+          command: 'pack'
+          packagesToPack: '**/libraries/**/*.csproj'
+          versioningScheme: 'byEnvVar'
+          versionEnvVar: 'build.buildnumber'
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
