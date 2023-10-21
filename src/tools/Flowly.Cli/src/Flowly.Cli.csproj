@@ -10,6 +10,9 @@
 	<SelfContained>true</SelfContained>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
+	<PropertyGroup>
+		<PreserveCompilationContext>true</PreserveCompilationContext>
+	</PropertyGroup>	
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
