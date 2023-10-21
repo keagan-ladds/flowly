@@ -29,7 +29,7 @@ stages:
       steps:
         - bash: |
             short_hash=`git rev-parse --short=8 HEAD`
-            echo "##vso[build.updatebuildnumber]0.0.0-dev.$short_hash"
+            echo "##vso[build.updatebuildnumber]1.0.0-dev.$short_hash"
           workingDirectory: $(Build.SourcesDirectory)
           displayName: Set Non-Release Build Number
           condition: eq(variables.isRelease, false)
