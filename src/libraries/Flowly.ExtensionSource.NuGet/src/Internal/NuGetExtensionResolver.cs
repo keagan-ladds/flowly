@@ -45,7 +45,7 @@ namespace Flowly.ExtensionSource.NuGet.Internal
             return packagesToInstall;
         }
 
-        public static async Task<IEnumerable<string>> InstallPackages(SourceCacheContext sourceCacheContext, ILogger logger,
+        public static async Task<IEnumerable<DownloadResourceResult>> InstallPackages(SourceCacheContext sourceCacheContext, ILogger logger,
                                     IEnumerable<SourcePackageDependencyInfo> packagesToInstall, string rootPackagesDirectory,
                                     ISettings nugetSettings, CancellationToken cancellationToken)
         {
@@ -56,10 +56,13 @@ namespace Flowly.ExtensionSource.NuGet.Internal
                 ClientPolicyContext.GetClientPolicy(nugetSettings, logger),
                 logger);
 
-            var assemblies = new HashSet<string>();
+            var results = new List<DownloadResourceResult>();
 
             foreach (var package in packagesToInstall)
             {
+                if (package.Id == "Flowly.Core")
+                    continue;
+
                 var downloadResource = await package.Source.GetResourceAsync<DownloadResource>(cancellationToken);
 
                 // Download the package (might come from the shared package cache).
@@ -78,28 +81,10 @@ namespace Flowly.ExtensionSource.NuGet.Internal
                     packageExtractionContext,
                     cancellationToken);
 
-                var frameworkReducer = new FrameworkReducer();
-                var framework = NuGetFramework.Parse("netstandard2.1");
-
-                var baseDir = Path.Combine(rootPackagesDirectory, $"{package.Id}.{package.Version}");
-
-                var libItems = downloadResult.PackageReader.GetLibItems();
-                var nearest = frameworkReducer.GetNearest(framework, libItems.Select(x => x.TargetFramework));
-                var extensionAssemblies = libItems
-                    .Where(x => x.TargetFramework.Equals(nearest))
-                    .SelectMany(x => x.Items)
-                    .Select(x => Path.Combine(baseDir, x));
-                
-                assemblies.AddRange(extensionAssemblies);
-
-                /*var frameworkItems = downloadResult.PackageReader.GetFrameworkItems();
-                nearest = frameworkReducer.GetNearest(framework, frameworkItems.Select(x => x.TargetFramework));
-                Console.WriteLine(string.Join("\n", frameworkItems
-                    .Where(x => x.TargetFramework.Equals(nearest))
-                    .SelectMany(x => x.Items)));*/
+                results.Add(downloadResult);
             }
 
-            return assemblies;
+            return results;
         }
 
         public static async Task GetPackageDependencies(PackageIdentity package, SourceCacheContext cacheContext,
@@ -111,6 +96,11 @@ namespace Flowly.ExtensionSource.NuGet.Internal
         {
             // Don't recurse over a package we've already seen.
             if (availablePackages.Contains(package))
+            {
+                return;
+            }
+
+            if (package.Id == "Flowly.Core")
             {
                 return;
             }
@@ -131,6 +121,8 @@ namespace Flowly.ExtensionSource.NuGet.Internal
                 {
                     continue;
                 }
+
+                
 
                 // Filter the dependency info.
                 // Don't bring in any dependencies that are provided by the host.
@@ -207,6 +199,12 @@ namespace Flowly.ExtensionSource.NuGet.Internal
 
         private static bool DependencySuppliedByHost(DependencyContext hostDependencies, PackageDependency dep)
         {
+            // Hackyity Hackity
+            // The Flowly.Core package's version is determined at build time, so we can't compare the host's version
+
+            if (dep.Id == "Flowly.Core")
+                return true;
+
             // See if a runtime library with the same ID as the package is available in the host's runtime libraries.
             var runtimeLib = hostDependencies.RuntimeLibraries.FirstOrDefault(r => r.Name == dep.Id);
 

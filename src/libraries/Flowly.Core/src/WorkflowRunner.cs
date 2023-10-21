@@ -14,6 +14,7 @@ namespace Flowly.Core
         public IExtensionSource? ExtensionSource { get;  set; }
         public IWorfklowStepFactory? WorfklowStepFactory { get; set; }
         public ITypeResolver? TypeResolver { get; set; }
+        public IRuntimeDependencyResolver? RuntimeDependencyResolver { get; set; }
         public string WorkingDirectory { get; set; } = Directory.GetCurrentDirectory();
 
         public async Task RunAsync(WorkflowDefinition workflow)
@@ -25,6 +26,11 @@ namespace Flowly.Core
 
             if (!CanResolveAllTypes(workflow, typeResolver) && ExtensionSource != null && workflow.Extensions.Any())
             {
+                if (RuntimeDependencyResolver != null)
+                {
+                    ExtensionSource.RuntimeDependencyResolver = RuntimeDependencyResolver;
+                }
+
                 var extensionProvider = ExtensionSource.BuildProvider();
                 await extensionProvider.LoadAsync(workflow.Extensions.ToArray());
 
@@ -50,8 +56,10 @@ namespace Flowly.Core
                     await step.ExecuteAsync();
                     step.Successful = true;
                 }
-                catch(Exception)
+                catch(Exception ex)
                 {
+
+
                     if (!step.ContinueOnError)
                         throw;
                 }

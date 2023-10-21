@@ -2,6 +2,8 @@
 using Flowly.Cli.Extensions;
 using Flowly.Cli.Internal;
 using Flowly.Core.Builders;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Flowly.Cli
 {
@@ -16,6 +18,10 @@ namespace Flowly.Cli
 
         static int RunAndReturnExitCode(RunnerOptions opts)
         {
+            
+
+            
+
             var workflow = new WorkflowBuilder()
                 .FromRunnerOptions(opts)
                 .Build();
@@ -28,5 +34,7 @@ namespace Flowly.Cli
 
             return 0;
         }
+
+        
     }
 }

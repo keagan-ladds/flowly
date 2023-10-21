@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Flowly.Core.Providers
+﻿namespace Flowly.Core.Providers
 {
     public interface IExtensionSource
     {
+        IRuntimeDependencyResolver? RuntimeDependencyResolver { get; set; }
+
         IExtensionProvider BuildProvider();
     }
 }

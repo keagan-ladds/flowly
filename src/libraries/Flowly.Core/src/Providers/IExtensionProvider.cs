@@ -8,5 +8,6 @@ namespace Flowly.Core.Providers
     {
         Task LoadAsync(ExtensionDefinition[] extensions);
         bool TryResolveType(string name, out Type type);
+        bool TryResolveRuntimeDependency(string dependency, out string filePath);
     }
 }

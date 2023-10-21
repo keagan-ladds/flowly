@@ -20,6 +20,12 @@ namespace Flowly.Core.Builders
             return this;
         }
 
+        public RunnerBuilder WithRuntimeDependencyResolver(IRuntimeDependencyResolver resolver)
+        {
+            _builderActions.Add(runner => { runner.RuntimeDependencyResolver = resolver; });
+            return this;
+        }
+
         public RunnerBuilder WithStepFactory(IWorfklowStepFactory worfklowStepFactory)
         {
             _builderActions.Add(runner => { runner.WorfklowStepFactory  = worfklowStepFactory; });

@@ -23,8 +23,13 @@ namespace Flowly.Cli.Extensions
                 PackageSources = packageSources,
                 BaseDirectory = baseDirectory,
             };
+            var resolver = new RuntimeDependencyResolver();
 
             builder.WithExtensionSource(nugetExtensionSource);  
+            builder.WithRuntimeDependencyResolver(resolver);
+
+            if (!string.IsNullOrEmpty(opts.Directory))
+                builder.SetWorkingDirectory(opts.Directory);
 
             return builder;
         }
