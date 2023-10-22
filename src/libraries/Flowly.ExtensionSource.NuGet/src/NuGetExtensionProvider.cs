@@ -142,14 +142,21 @@ namespace Flowly.ExtensionSource.NuGet
         {
             foreach (var assemblyPath in assemblies)
             {
-                var assembly = Assembly.LoadFrom(assemblyPath);
-                _assemblies.Add(assembly);
-                _runtimeDependencyResolver?.ResolveForAssembly(this, assembly);
-
-                var exts = assembly.GetTypes().Where(_ => _.IsSubclassOf(typeof(WorkflowStep))).ToList();
-                foreach (var ext in exts)
+                try
                 {
-                    _availableExtensionTypes.TryAdd(ext.FullName, ext);
+                    var assembly = Assembly.LoadFrom(assemblyPath);
+                    _assemblies.Add(assembly);
+                    _runtimeDependencyResolver?.ResolveForAssembly(this, assembly);
+
+                    var exts = assembly.GetTypes().Where(_ => _.IsSubclassOf(typeof(WorkflowStep))).ToList();
+                    foreach (var ext in exts)
+                    {
+                        _availableExtensionTypes.TryAdd(ext.FullName, ext);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"An exception occured while loading the assembly '{assemblyPath}'");
                 }
             }
         }

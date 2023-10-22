@@ -18,11 +18,7 @@ namespace Flowly.Cli
 
         static int RunAndReturnExitCode(RunnerOptions opts)
         {
-            
-
-            
-
-            var workflow = new WorkflowBuilder()
+           var workflow = new WorkflowBuilder()
                 .FromRunnerOptions(opts)
                 .Build();
 
