@@ -23,7 +23,6 @@ variables:
   isPr: $[startsWith(variables['Build.SourceBranch'], 'refs/pull')]
   sourceVersion: $(Build.SourceVersion)
   buildRevision: $[counter(variables['Build.SourceVersion'], 0)]
-  buildConfiguration: 'Release'
 
 stages:
   - stage: Prepare
