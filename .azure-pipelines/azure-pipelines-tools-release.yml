@@ -1,0 +1,75 @@
+trigger:
+ branches:
+    include:
+    - r/*
+ paths:
+    include:
+      - src/tools
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/r/')]
+  buildRevision: $[counter(variables['Build.SourceBranch'], 0)]
+
+stages:
+  - stage: Prepare
+    jobs:
+    - job:
+      pool: 
+        vmImage: ubuntu-latest
+      steps:
+        - bash: |
+            echo "A release pipeline has been run against a non-release branch, skipping."
+            exit 1
+          workingDirectory: $(Build.SourcesDirectory)
+          condition: eq(variables.isRelease, false)
+
+        - bash: |
+            str=$(Build.SourceBranch)
+            echo $str
+            if [[ $str =~ ([0-9]+.[0-9]+.[0-9]+)(-[0-9a-zA-Z]+)? ]]; then
+              versionSuffix=${BASH_REMATCH[1]}
+              versionPrefix=${BASH_REMATCH[2]}
+              echo "##vso[build.updatebuildnumber]$versionSuffix.$(buildRevision)$versionPrefix"
+            else
+              echo "Could not determine release build number from branch name."
+              exit 1
+            fi
+          workingDirectory: $(Build.SourcesDirectory)
+          displayName: Set Build Number
+          condition: eq(variables.isRelease, true)
+
+  - stage: Build
+    condition: eq(variables.isRelease, true)
+    jobs:
+    - job:
+      displayName: Build
+      pool: 
+        vmImage: ubuntu-latest
+      steps:
+      - task: DotNetCoreCLI@2
+        inputs:
+            command: 'restore'
+            projects: '**/tools/**/*.csproj'
+            feedsToUse: 'select'
+            
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'publish'
+          publishWebProjects: false
+          projects: '**/tools/**/*.csproj'
+          arguments: '-p:PublishSingleFile=true --self-contained true /p:Version=$(Build.BuildNumber)'
+          zipAfterPublish: false
+            
+      - task: CopyFiles@2
+        inputs:
+          Contents: '**/win-x64/publish/*.exe'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)/win-x64'
+          flattenFolders: true
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'tools'
+          publishLocation: 'Container'
