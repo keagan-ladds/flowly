@@ -12,14 +12,13 @@ pool:
 
 variables:
   isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/r/')]
-  sourceVersion: $(Build.SourceVersion)
-  buildRevision: $[counter(variables['Build.SourceVersion'], 0)]
-  buildConfiguration: 'Release'
+  buildRevision: $[counter(variables['Build.SourceBranch'], 0)]
 
 stages:
   - stage: Prepare
     jobs:
-    - job:       
+    - job:    
+      continueOnError: false   
       pool: 
         vmImage: ubuntu-latest
       steps:
@@ -30,9 +29,12 @@ stages:
           condition: eq(variables.isRelease, false)
 
         - bash: |
-            if [[ $str =~ (\d+.\d+.\d+(?:.\d+)?(?:-[\w\d]+)?) ]]; then
-              echo "##vso[build.updatebuildnumber]${BASH_REMATCH[2]}"
-              echo "match: '${BASH_REMATCH[2]}'"
+            str=$(Build.SourceBranch)
+            echo $str
+            if [[ $str =~ ([0-9]+.[0-9]+.[0-9]+)(-[0-9a-zA-Z]+)? ]]; then
+              versionSuffix=${BASH_REMATCH[1]}
+              versionPrefix=${BASH_REMATCH[2]}
+              echo "##vso[build.updatebuildnumber]$versionSuffix.$(buildRevision)$versionPrefix"
             else
               echo "Could not determine release build number from branch name."
               exit 1
@@ -43,7 +45,7 @@ stages:
           
 
   - stage: Build
-    condition: eq(variables.isRelease, true)
+    dependsOn: 'Prepare'
     jobs:
     - job:
       displayName: Build
@@ -75,8 +77,8 @@ stages:
           publishLocation: 'Container'
 
   - stage: Deploy
-    displayName: Deploy to Internal Feed
-    condition: eq(variables.isRelease, true)
+    dependsOn: Build
+    displayName: Deploy
     jobs:
       - job: 
         pool: 
