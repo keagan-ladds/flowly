@@ -64,7 +64,6 @@ stages:
         inputs:
           command: 'build'
           projects: '**/libraries/**/*.csproj'
-          arguments: '-p:Version=$(Build.BuildNumber)'
 
       - task: DotNetCoreCLI@2
         inputs:
