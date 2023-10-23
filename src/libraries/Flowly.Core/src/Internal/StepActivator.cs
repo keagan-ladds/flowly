@@ -45,7 +45,7 @@ namespace Flowly.Core.Internal
 
             if (workflowStepDefinition.Options != null)
             {
-                TypeHelper.Map(workflowStepDefinition.Options, options);
+                TypeMapper.Map(workflowStepDefinition.Options, options);
             }
 
             return options;
