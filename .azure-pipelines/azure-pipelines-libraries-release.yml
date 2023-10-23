@@ -1,0 +1,98 @@
+trigger:
+ branches:
+    include:
+    - r/*
+
+ paths:
+    include:
+      - src/libraries
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/r/')]
+  sourceVersion: $(Build.SourceVersion)
+  buildRevision: $[counter(variables['Build.SourceVersion'], 0)]
+  buildConfiguration: 'Release'
+
+stages:
+  - stage: Prepare
+    jobs:
+    - job:       
+      pool: 
+        vmImage: ubuntu-latest
+      steps:
+        - bash: |
+            echo "A release pipeline has been run against a non-release branch, skipping."
+            exit 1
+          workingDirectory: $(Build.SourcesDirectory)
+          condition: eq(variables.isRelease, false)
+
+        - bash: |
+            if [[ $str =~ (\d+.\d+.\d+(?:.\d+)?(?:-[\w\d]+)?) ]]; then
+              echo "##vso[build.updatebuildnumber]${BASH_REMATCH[2]}"
+              echo "match: '${BASH_REMATCH[2]}'"
+            else
+              echo "Could not determine release build number from branch name."
+              exit 1
+            fi
+          workingDirectory: $(Build.SourcesDirectory)
+          displayName: Set CI/CD Build Number
+          condition: eq(variables.isRelease, true)
+          
+
+  - stage: Build
+    condition: eq(variables.isRelease, true)
+    jobs:
+    - job:
+      displayName: Build
+      pool: 
+        vmImage: ubuntu-latest
+      steps:
+      - task: DotNetCoreCLI@2
+        inputs:
+            command: 'restore'
+            projects: '**/libraries/**/*.csproj'
+            feedsToUse: 'select'
+            
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'build'
+          projects: '**/libraries/**/*.csproj'
+          arguments: '-p:Version=$(Build.BuildNumber)'
+
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: 'pack'
+          packagesToPack: '**/libraries/**/*.csproj'
+          versioningScheme: 'byEnvVar'
+          versionEnvVar: 'build.buildnumber'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'packages'
+          publishLocation: 'Container'
+
+  - stage: Deploy
+    displayName: Deploy to Internal Feed
+    condition: eq(variables.isRelease, true)
+    jobs:
+      - job: 
+        pool: 
+            vmImage: ubuntu-latest
+        displayName: Publish to internal feed
+        steps:
+        - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'packages'
+            downloadPath: '$(System.ArtifactsDirectory)'
+
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'push'
+            packagesToPush: '$(System.ArtifactsDirectory)/packages/*.nupkg'
+            nuGetFeedType: 'internal'
+            publishVstsFeed: 'f9a3ba6c-3ffc-42f5-9f8a-30e9c233099f'
