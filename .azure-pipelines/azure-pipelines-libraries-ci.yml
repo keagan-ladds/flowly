@@ -1,8 +1,3 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
  branches:
     include:
@@ -16,6 +11,7 @@ pr:
  branches:
    include:
      - main
+     - r/*
  paths:
    include:
    - src/libraries
@@ -27,11 +23,12 @@ variables:
   isPr: $[startsWith(variables['Build.SourceBranch'], 'refs/pull')]
   sourceVersion: $(Build.SourceVersion)
   buildRevision: $[counter(variables['Build.SourceVersion'], 0)]
+  buildConfiguration: 'Release'
 
 stages:
   - stage: Prepare
     jobs:
-    - job:
+    - job:       
       pool: 
         vmImage: ubuntu-latest
       steps:
@@ -39,7 +36,15 @@ stages:
             short_hash=`git rev-parse --short=8 HEAD`
             echo "##vso[build.updatebuildnumber]1.0.0-dev.$short_hash"
           workingDirectory: $(Build.SourcesDirectory)
-          displayName: Set Non-Release Build Number
+          displayName: Set CI/CD Build Number
+          condition: eq(variables.isPr, false)
+
+        - bash: |
+            short_hash=`git rev-parse --short=8 HEAD`
+            echo "##vso[build.updatebuildnumber]1.0.0-pr.$short_hash"
+          workingDirectory: $(Build.SourcesDirectory)
+          displayName: Set PR Build Number
+          condition: eq(variables.isPr, true)
           
 
   - stage: Build
@@ -57,8 +62,9 @@ stages:
             
       - task: DotNetCoreCLI@2
         inputs:
-            command: 'build'
-            projects: '**/libraries/**/*.csproj'
+          command: 'build'
+          projects: '**/libraries/**/*.csproj'
+          arguments: '-p:Version=$(Build.BuildNumber)'
 
       - task: DotNetCoreCLI@2
         inputs:
@@ -73,13 +79,13 @@ stages:
           publishLocation: 'Container'
 
   - stage: Deploy
-    displayName: Deploy
+    displayName: Deploy to Internal Feed
     condition: eq(variables.isPr, false)
     jobs:
       - job: 
         pool: 
             vmImage: ubuntu-latest
-        displayName: Publish to local feed
+        displayName: Publish to internal feed
         steps:
         - task: DownloadBuildArtifacts@1
           inputs:
