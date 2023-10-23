@@ -46,6 +46,7 @@ stages:
 
   - stage: Build
     dependsOn: 'Prepare'
+    condition: succeeded()
     jobs:
     - job:
       displayName: Build
@@ -79,7 +80,7 @@ stages:
   - stage: Deploy
     dependsOn: Build
     displayName: Deploy
-    condition: succeeded() and eq(variables.isRelease, true)
+    condition: succeeded()
     jobs:
       - job: 
         pool: 
