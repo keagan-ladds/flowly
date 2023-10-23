@@ -101,27 +101,6 @@ stages:
             nuGetFeedType: 'internal'
             publishVstsFeed: 'f9a3ba6c-3ffc-42f5-9f8a-30e9c233099f'
             
-      - deployment:
-        displayName: NuGet Deployment
-        pool:
-          vmImage: ubuntu-latest
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: DownloadBuildArtifacts@1
-                  inputs:
-                    buildType: 'current'
-                    downloadType: 'single'
-                    artifactName: 'packages'
-                    downloadPath: '$(System.ArtifactsDirectory)'
-
-                - task: DotNetCoreCLI@2
-                  inputs:
-                    command: 'push'
-                    packagesToPush: '$(System.ArtifactsDirectory)/packages/*.nupkg'
-                    nuGetFeedType: 'internal'
-                    publishVstsFeed: 'f9a3ba6c-3ffc-42f5-9f8a-30e9c233099f'
                     
                 
        
