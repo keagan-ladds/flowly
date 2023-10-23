@@ -7,16 +7,24 @@ trigger:
  branches:
     include:
     - main
-    - r/*
+
  paths:
     include:
       - src/libraries
+
+pr: 
+ branches:
+   include:
+     - main
+ paths:
+   include:
+   - src/libraries
 
 pool:
   vmImage: ubuntu-latest
 
 variables:
-  isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/r/')]
+  isPr: $[startsWith(variables['Build.SourceBranch'], 'refs/pull')]
   sourceVersion: $(Build.SourceVersion)
   buildRevision: $[counter(variables['Build.SourceVersion'], 0)]
 
@@ -32,7 +40,7 @@ stages:
             echo "##vso[build.updatebuildnumber]1.0.0-dev.$short_hash"
           workingDirectory: $(Build.SourcesDirectory)
           displayName: Set Non-Release Build Number
-          condition: eq(variables.isRelease, false)
+          
 
   - stage: Build
     jobs:
@@ -51,7 +59,7 @@ stages:
         inputs:
             command: 'build'
             projects: '**/libraries/**/*.csproj'
-            
+
       - task: DotNetCoreCLI@2
         inputs:
           command: 'pack'
@@ -66,6 +74,7 @@ stages:
 
   - stage: Deploy
     displayName: Deploy
+    condition: eq(variables.isPr, false)
     jobs:
       - job: 
         pool: 
