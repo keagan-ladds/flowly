@@ -9,14 +9,41 @@ using System.Threading.Tasks;
 
 namespace Flowly.Core
 {
+    /// <summary>
+    /// Represents a workflow runner responsible for executing a sequence of steps defined in a workflow.
+    /// </summary>
     public sealed class WorkflowRunner : IWorkflowRunner
     {
-        public IExtensionSource? ExtensionSource { get;  set; }
+        /// <summary>
+        /// Gets or sets the extension source for loading workflow extensions.
+        /// </summary>
+        public IExtensionSource? ExtensionSource { get; set; }
+
+        /// <summary>
+        /// Gets or sets the workflow step factory used to create step instances.
+        /// </summary>
         public IWorfklowStepFactory? WorfklowStepFactory { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type resolver for resolving types needed in the workflow.
+        /// </summary>
         public ITypeResolver? TypeResolver { get; set; }
+
+        /// <summary>
+        /// Gets or sets the runtime dependency resolver for handling dependencies during execution.
+        /// </summary>
         public IRuntimeDependencyResolver? RuntimeDependencyResolver { get; set; }
+
+        /// <summary>
+        /// Gets or sets the working directory for the workflow. Defaults to the current directory.
+        /// </summary>
         public string WorkingDirectory { get; set; } = Directory.GetCurrentDirectory();
 
+        /// <summary>
+        /// Asynchronously runs the specified workflow.
+        /// </summary>
+        /// <param name="workflow">The workflow definition to be executed.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task RunAsync(WorkflowDefinition workflow)
         {
             var context = new WorkflowContext(WorkingDirectory, workflow.Variables);
@@ -41,7 +68,7 @@ namespace Flowly.Core
             if (!ValidateWorkflow(workflow, typeResolver))
                 return;
 
-            foreach(var step in workflow.Steps)
+            foreach (var step in workflow.Steps)
             {
                 var stepInstance = stepFactory.CreateInstance(step, typeResolver);
                 stepInstance.Variables = new WorkflowVariables(step.Variables);
@@ -49,21 +76,20 @@ namespace Flowly.Core
                 context.AddStep(stepInstance);
             }
 
-            foreach(var step in context.Steps)
+            foreach (var step in context.Steps)
             {
                 try
                 {
                     await step.ExecuteAsync();
                     step.Successful = true;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-
-
                     if (!step.ContinueOnError)
                         throw;
                 }
-                finally { 
+                finally
+                {
                     step.Executed = true;
                 }
             }
@@ -94,9 +120,10 @@ namespace Flowly.Core
         {
             var unresolvedTypes = new List<string>();
 
-            foreach(var step in workflow.Steps)
+            foreach (var step in workflow.Steps)
             {
-                if (step.TypeHint == null && !typeResolver.TryResolveType(step.Type, out var type)) {
+                if (step.TypeHint == null && !typeResolver.TryResolveType(step.Type, out var type))
+                {
                     unresolvedTypes.Add(step.Type);
                 }
             }
