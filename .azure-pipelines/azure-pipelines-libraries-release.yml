@@ -46,6 +46,7 @@ stages:
 
   - stage: Build
     dependsOn: 'Prepare'
+    condition: succeeded()
     jobs:
     - job:
       displayName: Build
@@ -79,6 +80,7 @@ stages:
   - stage: Deploy
     dependsOn: Build
     displayName: Deploy
+    condition: succeeded()
     jobs:
       - job: 
         pool: 
@@ -98,3 +100,8 @@ stages:
             packagesToPush: '$(System.ArtifactsDirectory)/packages/*.nupkg'
             nuGetFeedType: 'internal'
             publishVstsFeed: 'f9a3ba6c-3ffc-42f5-9f8a-30e9c233099f'
+            
+                    
+                
+       
+                
