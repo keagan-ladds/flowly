@@ -1,5 +1,6 @@
 ﻿using Flowly.Core.Definitions;
 using Flowly.Core.Internal;
+using Flowly.Core.Logging;
 using Flowly.Core.Providers;
 using System;
 using System.Collections.Generic;
@@ -34,10 +35,19 @@ namespace Flowly.Core
         /// </summary>
         public IRuntimeDependencyResolver? RuntimeDependencyResolver { get; set; }
 
+        public ILoggerSource? LoggerSource { get; set; }
+
         /// <summary>
         /// Gets or sets the working directory for the workflow. Defaults to the current directory.
         /// </summary>
         public string WorkingDirectory { get; set; } = Directory.GetCurrentDirectory();
+
+        private readonly ILogger _logger;
+
+        public WorkflowRunner()
+        {
+            _logger = Logger.GetLoggerInstance(nameof(WorkflowRunner));
+        }
 
         /// <summary>
         /// Asynchronously runs the specified workflow.
@@ -53,6 +63,7 @@ namespace Flowly.Core
 
             if (!CanResolveAllTypes(workflow, typeResolver) && ExtensionSource != null && workflow.Extensions.Any())
             {
+                _logger.Debug("Can't resolve all types from the loaded assemblies and extensions have been specified.");
                 if (RuntimeDependencyResolver != null)
                 {
                     ExtensionSource.RuntimeDependencyResolver = RuntimeDependencyResolver;
@@ -68,11 +79,17 @@ namespace Flowly.Core
             if (!ValidateWorkflow(workflow, typeResolver))
                 return;
 
+            var loggerProvider = LoggerSource?.GetProvider();
+
+            _logger.Debug("Workflow has been validated, moving on to instantiating all the steps");
+
             foreach (var step in workflow.Steps)
             {
                 var stepInstance = stepFactory.CreateInstance(step, typeResolver);
                 stepInstance.Variables = new WorkflowVariables(step.Variables);
                 stepInstance.ContinueOnError = step.ContinueOnError;
+                stepInstance.Logger = loggerProvider?.CreateLogger(step.Type) ?? Logger.Instance;
+
                 context.AddStep(stepInstance);
             }
 
@@ -80,13 +97,22 @@ namespace Flowly.Core
             {
                 try
                 {
+                    _logger.Info("Executing workflow step {step}.", step.GetType().Name);
                     await step.ExecuteAsync();
                     step.Successful = true;
                 }
                 catch (Exception ex)
                 {
-                    if (!step.ContinueOnError)
-                        throw;
+                    if (step.ContinueOnError)
+                    {
+                        _logger.Warn("An unhandled exception {exception} was thrown while processing a step. ", ex.Message);
+                    }
+                    else
+                    {
+                        _logger.Error(ex, "An unhandled exception was thrown while processing the workflow step.");
+                        break;
+                    }
+                        
                 }
                 finally
                 {
@@ -101,9 +127,8 @@ namespace Flowly.Core
 
             if (unresolvedTypes.Any())
             {
-                Console.WriteLine("The following types could not be resolved:");
-                foreach (var unresolvedType in unresolvedTypes)
-                    Console.WriteLine(unresolvedType);
+                Logger.Error("The following workflow steps could not be resolved while preparing the workflow: {0}", 
+                    string.Join(",", unresolvedTypes));
 
                 return false;
             }

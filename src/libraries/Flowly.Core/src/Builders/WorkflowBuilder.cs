@@ -11,6 +11,8 @@ namespace Flowly.Core.Builders
         private readonly List<Action<WorkflowDefinition>> _builderActions = new List<Action<WorkflowDefinition>>();
         private IWorkflowSource? _workflowSource;
 
+        public ILoggerProvider? LoggerProvider { get; private set; }
+
         public WorkflowBuilder SetVariable(string name, object value)
         {
             _builderActions.Add(workflow =>

@@ -38,6 +38,12 @@ namespace Flowly.Core.Builders
             return this;
         }
 
+        public RunnerBuilder WithLoggerSource(ILoggerSource loggerSource) 
+        {
+            _builderActions.Add(runner => { runner.LoggerSource = loggerSource; });
+            return this;
+        }
+
         public IWorkflowRunner Build()
         {
             var runner = new WorkflowRunner();

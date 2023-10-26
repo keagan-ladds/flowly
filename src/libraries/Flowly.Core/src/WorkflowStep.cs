@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Flowly.Core.Logging;
+using System.Threading.Tasks;
 
 namespace Flowly.Core
 {
@@ -31,6 +32,8 @@ namespace Flowly.Core
         /// Gets or sets a value indicating whether the workflow step was executed successfully.
         /// </summary>
         public bool Successful { get; internal set; }
+
+        public ILogger Logger { get; internal set; } = new NullLogger();
 
         /// <summary>
         /// Sets the context for the workflow step's execution.

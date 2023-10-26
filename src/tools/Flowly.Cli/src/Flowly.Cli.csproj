@@ -12,7 +12,15 @@
   </PropertyGroup>
 	<PropertyGroup>
 		<PreserveCompilationContext>true</PreserveCompilationContext>
-	</PropertyGroup>	
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="nlog.config" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="nlog.config">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	</ItemGroup>	
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
@@ -21,6 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\libraries\Flowly.Core\src\Flowly.Core.csproj" />
     <ProjectReference Include="..\..\..\libraries\Flowly.ExtensionSource.NuGet\src\Flowly.ExtensionSource.NuGet.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.Logging.NLog\src\Flowly.Logging.NLog.csproj" />
     <ProjectReference Include="..\..\..\libraries\Flowly.WorkflowSource.Yaml\src\Flowly.WorkflowSource.Yaml.csproj" />
   </ItemGroup>
 
