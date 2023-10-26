@@ -9,7 +9,7 @@ namespace Flowly.Cli.Internal
         public string? Directory { get; set; }
 
         [Option('f', "file", Required = true)]
-        public string Workflow { get; set; }
+        public string WorkflowFile { get; set; }
 
         [Option('s', "source")]
         public IEnumerable<string> PackageSources { get; set; } = new List<string>();

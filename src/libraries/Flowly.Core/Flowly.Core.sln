@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flowly.Core", "src\Flowly.Core.csproj", "{172576E6-9EBE-4876-8B55-6C8433B4762C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flowly.Core.UnitTests", "test\Flowly.Core.UnitTests.csproj", "{E604AABB-A11D-4385-B14E-C20A5F58C52A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{172576E6-9EBE-4876-8B55-6C8433B4762C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{172576E6-9EBE-4876-8B55-6C8433B4762C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{172576E6-9EBE-4876-8B55-6C8433B4762C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E604AABB-A11D-4385-B14E-C20A5F58C52A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E604AABB-A11D-4385-B14E-C20A5F58C52A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E604AABB-A11D-4385-B14E-C20A5F58C52A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E604AABB-A11D-4385-B14E-C20A5F58C52A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,7 +7,7 @@ namespace Flowly.Cli.Extensions
     internal static class WorkflowBuilderExtensions
     {
         public static WorkflowBuilder FromRunnerOptions(this WorkflowBuilder builder, RunnerOptions opts) {
-            builder.FromYamlFile(opts.Workflow);
+            builder.FromYamlFile(opts.WorkflowFile);
             return builder;
         }
     }
