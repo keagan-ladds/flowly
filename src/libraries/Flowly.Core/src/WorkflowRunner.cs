@@ -98,25 +98,12 @@ namespace Flowly.Core
                 try
                 {
                     _logger.Info("Executing workflow step {step}.", step.GetType().Name);
-                    await step.ExecuteAsync();
-                    step.Successful = true;
+                    await step.ExecuteInternalAsync();
                 }
                 catch (Exception ex)
                 {
-                    if (step.ContinueOnError)
-                    {
-                        _logger.Warn("An unhandled exception {exception} was thrown while processing a step. ", ex.Message);
-                    }
-                    else
-                    {
-                        _logger.Error(ex, "An unhandled exception was thrown while processing the workflow step.");
-                        break;
-                    }
-                        
-                }
-                finally
-                {
-                    step.Executed = true;
+                    _logger.Error(ex, "An unhandled exception was thrown while processing the workflow step.");
+                    break;
                 }
             }
         }

@@ -33,10 +33,6 @@ namespace Flowly.Cli
 
         static int RunAndReturnExitCode(RunnerOptions opts)
         {
-            ILogger logger = Logger.GetLoggerInstance(nameof(Program));
-            logger.Debug("This is a test");
-            logger.Info("This is a test");
-
             var workflow = new WorkflowBuilder()
                  .FromRunnerOptions(opts)
                  .Build();

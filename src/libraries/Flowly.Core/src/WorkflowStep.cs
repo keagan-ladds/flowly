@@ -1,8 +1,19 @@
-﻿using Flowly.Core.Logging;
+﻿using Flowly.Core.Exceptions;
+using Flowly.Core.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace Flowly.Core
 {
+    public enum ExecutionStatus
+    {
+        Pending = 0,
+        Executing,
+        Executed,
+        Cancelled,
+        Failed
+    }
+
     /// <summary>
     /// Represents an abstract base class for a workflow step in a workflow sequence.
     /// </summary>
@@ -24,14 +35,11 @@ namespace Flowly.Core
         public bool ContinueOnError { get; internal set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the workflow step has been executed.
-        /// </summary>
-        public bool Executed { get; internal set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether the workflow step was executed successfully.
         /// </summary>
         public bool Successful { get; internal set; }
+
+        public ExecutionStatus ExecutionStatus { get; internal set; } = ExecutionStatus.Pending;
 
         public ILogger Logger { get; internal set; } = new NullLogger();
 
@@ -49,6 +57,43 @@ namespace Flowly.Core
         /// </summary>
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
         public abstract ValueTask ExecuteAsync();
+
+        protected void Cancel(bool? skip = null)
+        {
+            throw new StepExecutionException($"The step '{GetType().Name}' was cancelled.", true, skip);
+        }
+
+        internal async Task ExecuteInternalAsync()
+        {
+            try
+            {
+                ExecutionStatus = ExecutionStatus.Executing;
+
+                await ExecuteAsync();
+
+                ExecutionStatus = ExecutionStatus.Executed;
+            }
+            catch(StepExecutionException ex)
+            {
+                if (ex.IsCancelled) 
+                    ExecutionStatus = ExecutionStatus.Cancelled;
+                else 
+                    ExecutionStatus = ExecutionStatus.Failed;
+
+                if (ex.ContinueOnError.HasValue)
+                {
+                    if (ex.ContinueOnError != true)
+                        throw;
+                } 
+                else if (ContinueOnError == false)
+                    throw;
+            }
+            catch(Exception ex)
+            {
+                if (ContinueOnError == false)
+                    throw;
+            }
+        }
     }
 
     /// <summary>
