@@ -76,6 +76,11 @@ stages:
 
       - task: DotNetCoreCLI@2
         inputs:
+          command: 'test'
+          projects: '**/libraries/**/*.csproj'
+
+      - task: DotNetCoreCLI@2
+        inputs:
           command: 'pack'
           packagesToPack: '**/libraries/**/*.csproj'
           versioningScheme: 'byEnvVar'
