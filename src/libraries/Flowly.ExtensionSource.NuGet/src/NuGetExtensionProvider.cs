@@ -17,6 +17,7 @@ using Flowly.Core.Providers;
 using NuGet.Versioning;
 using NuGet.Packaging.Core;
 using NuGet.Packaging;
+using Flowly.Core.Logging;
 
 namespace Flowly.ExtensionSource.NuGet
 {
@@ -27,11 +28,13 @@ namespace Flowly.ExtensionSource.NuGet
         private readonly IRuntimeDependencyResolver? _runtimeDependencyResolver;
         private readonly List<Assembly> _assemblies = new List<Assembly>();
         private readonly List<RuntimeItem> _runtimeItems = new List<RuntimeItem>();
-
+        private readonly Core.Logging.ILogger _logger;
         public string BaseDirectory { get; private set; }
 
         public NuGetExtensionProvider(PackageSource[] packageSources, string baseDirectory, IRuntimeDependencyResolver? runtimeDependencyResolver = null)
         {
+            _logger = Core.Logging.Logger.GetLoggerInstance(nameof(NuGetExtensionProvider));
+
             _packageSources = packageSources;
             BaseDirectory = baseDirectory;
             _runtimeDependencyResolver = runtimeDependencyResolver;
@@ -154,9 +157,9 @@ namespace Flowly.ExtensionSource.NuGet
                         _availableExtensionTypes.TryAdd(ext.FullName, ext);
                     }
                 }
-                catch(Exception ex)
+                catch(FileLoadException ex)
                 {
-                    Console.WriteLine($"An exception occured while loading the assembly '{assemblyPath}'");
+                    _logger.Warn("An exception was thrown while loading the assembly {assemblyPath} but execution will continue.", assemblyPath);
                 }
             }
         }

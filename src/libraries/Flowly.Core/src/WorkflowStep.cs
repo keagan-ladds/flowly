@@ -1,19 +1,9 @@
 ﻿using Flowly.Core.Exceptions;
 using Flowly.Core.Logging;
-using System;
 using System.Threading.Tasks;
 
 namespace Flowly.Core
 {
-    public enum ExecutionStatus
-    {
-        Pending = 0,
-        Executing,
-        Executed,
-        Cancelled,
-        Failed
-    }
-
     /// <summary>
     /// Represents an abstract base class for a workflow step in a workflow sequence.
     /// </summary>
@@ -35,12 +25,18 @@ namespace Flowly.Core
         public bool ContinueOnError { get; internal set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the workflow step was executed successfully.
+        /// Gets or sets the maximum number of retries on failure for the workflow step.
         /// </summary>
-        public bool Successful { get; internal set; }
+        public int RetryCountOnFailure { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating the execution status of the workflow step.
+        /// </summary>
         public ExecutionStatus ExecutionStatus { get; internal set; } = ExecutionStatus.Pending;
 
+        /// <summary>
+        /// Gets or sets the logger for the workflow step.
+        /// </summary>
         public ILogger Logger { get; internal set; } = new NullLogger();
 
         /// <summary>
@@ -58,11 +54,18 @@ namespace Flowly.Core
         /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
         public abstract ValueTask ExecuteAsync();
 
+        /// <summary>
+        /// Cancels the execution of the workflow step.
+        /// </summary>
+        /// <param name="skip">Indicates whether the subsequent steps should be skipped. If not specified, defaults to <c>null</c>.</param>
         protected void Cancel(bool? skip = null)
         {
             throw new StepExecutionException($"The step '{GetType().Name}' was cancelled.", true, skip);
         }
 
+        /// <summary>
+        /// Executes the workflow step internally, handling execution status and exceptions.
+        /// </summary>
         internal async Task ExecuteInternalAsync()
         {
             try
@@ -73,24 +76,18 @@ namespace Flowly.Core
 
                 ExecutionStatus = ExecutionStatus.Executed;
             }
-            catch(StepExecutionException ex)
+            catch (StepExecutionException ex)
             {
-                if (ex.IsCancelled) 
-                    ExecutionStatus = ExecutionStatus.Cancelled;
-                else 
-                    ExecutionStatus = ExecutionStatus.Failed;
+                ExecutionStatus = ex.IsCancelled ? ExecutionStatus.Cancelled : ExecutionStatus.Failed;
 
-                if (ex.ContinueOnError.HasValue)
-                {
-                    if (ex.ContinueOnError != true)
-                        throw;
-                } 
-                else if (ContinueOnError == false)
+                var continueOnError = ex.ContinueOnError ?? ContinueOnError;
+
+                if (!continueOnError)
                     throw;
             }
-            catch(Exception ex)
+            catch
             {
-                if (ContinueOnError == false)
+                if (!ContinueOnError)
                     throw;
             }
         }
@@ -115,6 +112,37 @@ namespace Flowly.Core
         {
             Options = options;
         }
+    }
+
+    /// <summary>
+    /// Represents the execution status of a workflow step.
+    /// </summary>
+    public enum ExecutionStatus
+    {
+        /// <summary>
+        /// The step is pending execution.
+        /// </summary>
+        Pending = 0,
+
+        /// <summary>
+        /// The step is currently executing.
+        /// </summary>
+        Executing,
+
+        /// <summary>
+        /// The step has been successfully executed.
+        /// </summary>
+        Executed,
+
+        /// <summary>
+        /// The step was cancelled during execution.
+        /// </summary>
+        Cancelled,
+
+        /// <summary>
+        /// The step execution failed.
+        /// </summary>
+        Failed
     }
 
 }

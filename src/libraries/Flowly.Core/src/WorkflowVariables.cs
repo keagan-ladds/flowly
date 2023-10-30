@@ -35,5 +35,13 @@ namespace Flowly.Core
 
             Variables[name] = value;
         }
+
+        public void SetValue<T>(string name, T value)
+        {
+            if (string.IsNullOrEmpty(name))
+                return;
+
+            Variables[name] = value;
+        }
     }
 }

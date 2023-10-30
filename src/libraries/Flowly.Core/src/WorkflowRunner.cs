@@ -88,7 +88,7 @@ namespace Flowly.Core
                 var stepInstance = stepFactory.CreateInstance(step, typeResolver);
                 stepInstance.Variables = new WorkflowVariables(step.Variables);
                 stepInstance.ContinueOnError = step.ContinueOnError;
-                stepInstance.Logger = loggerProvider?.CreateLogger(step.Type) ?? Logger.Instance;
+                stepInstance.Logger = loggerProvider?.CreateLogger(step.Type) ?? Logger.GetLoggerInstance(step.Type);
 
                 context.AddStep(stepInstance);
             }
@@ -114,7 +114,7 @@ namespace Flowly.Core
 
             if (unresolvedTypes.Any())
             {
-                Logger.Error("The following workflow steps could not be resolved while preparing the workflow: {0}", 
+                _logger.Error("The following workflow steps could not be resolved while preparing the workflow: {0}", 
                     string.Join(",", unresolvedTypes));
 
                 return false;
