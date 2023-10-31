@@ -1,23 +1,20 @@
-﻿using Flowly.Core.Definitions;
+﻿using Flowly.Core;
+using Flowly.Core.Definitions;
+using Flowly.Core.Providers;
+using Flowly.ExtensionSource.NuGet.Internal;
 using Microsoft.Extensions.DependencyModel;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
+using NuGet.Packaging;
 using NuGet.Protocol.Core.Types;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System;
-using System.Threading.Tasks;
-using Flowly.ExtensionSource.NuGet.Internal;
-using System.Reflection;
 using System.Linq;
-using Flowly.Core;
-using Flowly.Core.Providers;
-using NuGet.Versioning;
-using NuGet.Packaging.Core;
-using NuGet.Packaging;
-using Flowly.Core.Logging;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Flowly.ExtensionSource.NuGet
 {
@@ -58,6 +55,7 @@ namespace Flowly.ExtensionSource.NuGet
             return NullSettings.Instance;
         }
 
+
         private async Task LoadExtensions(ExtensionDefinition[] extensions)
         {
             var settings = GetSettings();
@@ -70,8 +68,6 @@ namespace Flowly.ExtensionSource.NuGet
 
             // Get the list of repositories.
             var repositories = sourceRepositoryProvider.GetRepositories();
-
-            var dummyPackage = new SourcePackageDependencyInfo("Flowly.Core", new NuGetVersion("0.0.0"), new List<PackageDependency>(), false, repositories.First());
 
             // Disposable source cache.
             using var sourceCacheContext = new SourceCacheContext();
@@ -92,6 +88,8 @@ namespace Flowly.ExtensionSource.NuGet
             {
                 var packageIdentity = await NuGetExtensionResolver.GetPackageIdentity(ext, sourceCacheContext, logger, repositories, cancellationToken);
 
+
+
                 if (packageIdentity is null)
                 {
                     throw new InvalidOperationException($"Cannot find package {ext.Package}.");
@@ -100,7 +98,7 @@ namespace Flowly.ExtensionSource.NuGet
                 await NuGetExtensionResolver.GetPackageDependencies(packageIdentity, sourceCacheContext, targetFramework, logger, repositories, dependencyContext, allPackages, cancellationToken);
             }
 
-            allPackages.Add(dummyPackage);
+            //allPackages.Add(dummyPackage);
             var packagesToInstall = NuGetExtensionResolver.GetPackagesToInstall(sourceRepositoryProvider, logger, extensions, allPackages);
 
             // Where do we want to install our packages?

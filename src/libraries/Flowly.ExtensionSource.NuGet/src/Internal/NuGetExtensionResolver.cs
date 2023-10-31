@@ -11,9 +11,7 @@ using NuGet.Resolver;
 using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -60,9 +58,6 @@ namespace Flowly.ExtensionSource.NuGet.Internal
 
             foreach (var package in packagesToInstall)
             {
-                if (package.Id == "Flowly.Core")
-                    continue;
-
                 var downloadResource = await package.Source.GetResourceAsync<DownloadResource>(cancellationToken);
 
                 // Download the package (might come from the shared package cache).
@@ -100,11 +95,6 @@ namespace Flowly.ExtensionSource.NuGet.Internal
                 return;
             }
 
-            if (package.Id == "Flowly.Core")
-            {
-                return;
-            }
-
             foreach (var sourceRepository in repositories)
             {
                 // Get the dependency info for the package.
@@ -122,8 +112,6 @@ namespace Flowly.ExtensionSource.NuGet.Internal
                     continue;
                 }
 
-                
-
                 // Filter the dependency info.
                 // Don't bring in any dependencies that are provided by the host.
                 var actualSourceDep = new SourcePackageDependencyInfo(
@@ -134,7 +122,7 @@ namespace Flowly.ExtensionSource.NuGet.Internal
                     dependencyInfo.Source);
 
                 // Add to the list of all packages.
-                availablePackages.Add(dependencyInfo);
+                availablePackages.Add(actualSourceDep);
 
                 // Recurse through each package.
                 foreach (var dependency in dependencyInfo.Dependencies)
