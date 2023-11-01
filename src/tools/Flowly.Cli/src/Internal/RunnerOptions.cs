@@ -2,10 +2,10 @@
 
 namespace Flowly.Cli.Internal
 {
-    [Verb("run")]
+    [Verb("execute")]
     internal class RunnerOptions
     {
-        [Option("working-directory")]
+        [Option('d', "working-directory")]
         public string? Directory { get; set; }
 
         [Option('f', "file", Required = true, SetName = "WorkflowSourceFile")]
@@ -16,5 +16,7 @@ namespace Flowly.Cli.Internal
 
         [Option('s', "source")]
         public IEnumerable<string> PackageSources { get; set; } = new List<string>();
+
+        public string ApplicationFilesDirectory { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".flowly");
     }
 }

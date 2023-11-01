@@ -16,12 +16,10 @@ namespace Flowly.Cli.Extensions
                 packageSources.Add(new PackageSource(source));
             }
 
-            var baseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".flowly");
-
             var nugetExtensionSource = new NuGetExtensionSource()
             {
                 PackageSources = packageSources,
-                BaseDirectory = baseDirectory,
+                BaseDirectory = opts.ApplicationFilesDirectory,
             };
             var resolver = new RuntimeDependencyResolver();
 

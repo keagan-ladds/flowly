@@ -1,5 +1,6 @@
 ﻿using Flowly.Core.Exceptions;
 using Flowly.Core.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace Flowly.Core
@@ -57,11 +58,13 @@ namespace Flowly.Core
         /// <summary>
         /// Cancels the execution of the workflow step.
         /// </summary>
-        /// <param name="skip">Indicates whether the subsequent steps should be skipped. If not specified, defaults to <c>null</c>.</param>
+        /// <param name="skip">Indicates whether the cancelled step should be skipped. If not specified, defaults to <c>null</c>.</param>
         protected void Cancel(bool? skip = null)
         {
-            throw new StepExecutionException($"The step '{GetType().Name}' was cancelled.", true, skip);
+            throw new StepExecutionException($"The workflow step was cancelled.", true, skip);
         }
+
+        protected string Name => GetType().Name;
 
         /// <summary>
         /// Executes the workflow step internally, handling execution status and exceptions.
@@ -71,27 +74,56 @@ namespace Flowly.Core
             try
             {
                 ExecutionStatus = ExecutionStatus.Executing;
+                ReportExecutionStatus();
 
                 await ExecuteAsync();
 
                 ExecutionStatus = ExecutionStatus.Executed;
+                ReportExecutionStatus();
             }
             catch (StepExecutionException ex)
             {
                 ExecutionStatus = ex.IsCancelled ? ExecutionStatus.Cancelled : ExecutionStatus.Failed;
-
                 var continueOnError = ex.ContinueOnError ?? ContinueOnError;
+
+                ReportExecutionStatus(ex, continueOnError);
 
                 if (!continueOnError)
                     throw;
             }
-            catch
+            catch(Exception ex)
             {
+                ExecutionStatus = ExecutionStatus.Failed;
+
+                ReportExecutionStatus(ex, ContinueOnError);
+
                 if (!ContinueOnError)
                     throw;
             }
         }
+
+        private void ReportExecutionStatus()
+        {
+            if (ExecutionStatus == ExecutionStatus.Executing)
+                Logger.Info("Executing workflow step {step}.", Name);
+            else if (ExecutionStatus == ExecutionStatus.Executed)
+                Logger.Info("The workflow step {step} was executed succesfully.", Name);
+        }
+
+        private void ReportExecutionStatus(Exception exception, bool continueOnError)
+        {
+            if (ExecutionStatus == ExecutionStatus.Cancelled && continueOnError)
+                Logger.Warn("The workflow step {step} was cancelled.", Name);
+            else if (ExecutionStatus == ExecutionStatus.Cancelled && !continueOnError)
+                Logger.Error("The workflow step {step} was cancelled.", Name);
+            else if (ExecutionStatus == ExecutionStatus.Failed && continueOnError)
+                Logger.Warn("An error occurred while executing the workflow step {step}. {message}", Name, exception?.Message ?? string.Empty);
+            else if (ExecutionStatus != ExecutionStatus.Failed && !continueOnError)
+                Logger.Error(exception, "An error occurred while executing the workflow step {step}.", Name);
+        }
     }
+
+    
 
     /// <summary>
     /// Represents an abstract base class for a typed workflow step in a workflow sequence with additional options.

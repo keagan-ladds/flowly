@@ -97,12 +97,11 @@ namespace Flowly.Core
             {
                 try
                 {
-                    _logger.Info("Executing workflow step {step}.", step.GetType().Name);
                     await step.ExecuteInternalAsync();
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error(ex, "An unhandled exception was thrown while processing the workflow step.");
+                    _logger.Error(ex, "An error occurred while .");
                     break;
                 }
             }
