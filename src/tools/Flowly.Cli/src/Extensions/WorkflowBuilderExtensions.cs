@@ -1,7 +1,7 @@
 ﻿using Flowly.Cli.Internal;
 using Flowly.Cli.Providers;
 using Flowly.Core.Builders;
-using Flowly.WorkflowSource.Extensions;
+using Flowly.Extensions.Yaml.Extensions;
 
 namespace Flowly.Cli.Extensions
 {

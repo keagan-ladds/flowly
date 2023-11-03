@@ -1,6 +1,6 @@
 ﻿using Flowly.Cli.Internal;
 using Flowly.Core.Builders;
-using Flowly.ExtensionSource.NuGet;
+using Flowly.Extensions.NuGet;
 using NuGet.Configuration;
 
 namespace Flowly.Cli.Extensions

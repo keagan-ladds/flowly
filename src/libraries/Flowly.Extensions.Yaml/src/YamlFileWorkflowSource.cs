@@ -1,6 +1,6 @@
 ﻿using Flowly.Core.Providers;
 
-namespace Flowly.WorkflowSource.Yaml
+namespace Flowly.Extensions.Yaml
 {
     public class YamlFileWorkflowSource : IWorkflowSource
     {

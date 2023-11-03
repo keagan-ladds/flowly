@@ -1,7 +1,7 @@
 ﻿using Flowly.Core.Builders;
 using System;
 
-namespace Flowly.Logging.NLog.Extensions
+namespace Flowly.Extensions.NLog.Extensions
 {
     public static class RunnerBuilderExtensions
     {

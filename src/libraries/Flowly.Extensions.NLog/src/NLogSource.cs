@@ -1,7 +1,7 @@
 ﻿using Flowly.Core.Providers;
 using NLog;
 
-namespace Flowly.Logging.NLog
+namespace Flowly.Extensions.NLog
 {
     public class NLogSource : ILoggerSource
     {

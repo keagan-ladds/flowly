@@ -15,7 +15,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Flowly.ExtensionSource.NuGet.Internal
+namespace Flowly.Extensions.NuGet.Internal
 {
     internal class NuGetExtensionResolver
     {

@@ -7,7 +7,7 @@ using YamlDotNet;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace Flowly.WorkflowSource.Yaml.Internal
+namespace Flowly.Extensions.Yaml.Internal
 {
     internal class YamlWorkflowParser
     {
@@ -23,7 +23,7 @@ namespace Flowly.WorkflowSource.Yaml.Internal
 
         public WorkflowDefinition Parse(Stream stream)
         {
-            using(TextReader reader = new StreamReader(stream)) 
+            using (TextReader reader = new StreamReader(stream))
             {
                 return _deserializer.Deserialize<WorkflowDefinition>(reader);
             }

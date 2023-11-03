@@ -1,7 +1,6 @@
 ﻿using Flowly.Core.Builders;
-using Flowly.WorkflowSource.Yaml;
 
-namespace Flowly.WorkflowSource.Extensions
+namespace Flowly.Extensions.Yaml.Extensions
 {
     public static class WorkflowBuilderExtensions
     {

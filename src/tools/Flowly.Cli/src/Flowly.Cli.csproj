@@ -27,10 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\libraries\Flowly.Core\src\Flowly.Core.csproj" />
-    <ProjectReference Include="..\..\..\libraries\Flowly.ExtensionSource.NuGet\src\Flowly.ExtensionSource.NuGet.csproj" />
-    <ProjectReference Include="..\..\..\libraries\Flowly.Logging.NLog\src\Flowly.Logging.NLog.csproj" />
-    <ProjectReference Include="..\..\..\libraries\Flowly.WorkflowSource.Yaml\src\Flowly.WorkflowSource.Yaml.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.Extensions.NuGet\src\Flowly.Extensions.NuGet.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.Extensions.NLog\src\Flowly.Extensions.NLog.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.Extensions.Yaml\src\Flowly.Extensions.Yaml.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using Flowly.Core;
 using Flowly.Core.Definitions;
 using Flowly.Core.Providers;
-using Flowly.ExtensionSource.NuGet.Internal;
+using Flowly.Extensions.NuGet.Internal;
 using Microsoft.Extensions.DependencyModel;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -16,7 +16,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Flowly.ExtensionSource.NuGet
+namespace Flowly.Extensions.NuGet
 {
     public class NuGetExtensionProvider : IExtensionProvider
     {
@@ -155,7 +155,7 @@ namespace Flowly.ExtensionSource.NuGet
                         _availableExtensionTypes.TryAdd(ext.FullName, ext);
                     }
                 }
-                catch(FileLoadException ex)
+                catch (FileLoadException ex)
                 {
                     _logger.Warn("An exception was thrown while loading the assembly {assemblyPath} but execution will continue.", assemblyPath);
                 }

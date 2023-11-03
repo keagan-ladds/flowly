@@ -4,7 +4,7 @@ using NuGet.Configuration;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Flowly.ExtensionSource.NuGet
+namespace Flowly.Extensions.NuGet
 {
     public class NuGetExtensionSource : IExtensionSource
     {

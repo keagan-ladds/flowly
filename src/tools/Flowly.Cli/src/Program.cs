@@ -3,7 +3,7 @@ using Flowly.Cli.Extensions;
 using Flowly.Cli.Internal;
 using Flowly.Core.Builders;
 using Flowly.Core.Logging;
-using Flowly.Logging.NLog;
+using Flowly.Extensions.NLog;
 using NLog.Config;
 using System.Reflection;
 

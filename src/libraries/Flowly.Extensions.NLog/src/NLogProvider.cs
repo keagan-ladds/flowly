@@ -1,9 +1,9 @@
 ﻿using Flowly.Core.Providers;
-using Flowly.Logging.NLog.Internal;
+using Flowly.Extensions.NLog.Internal;
 using NLog;
 using System;
 
-namespace Flowly.Logging.NLog
+namespace Flowly.Extensions.NLog
 {
     public class NLogProvider : ILoggerProvider
     {

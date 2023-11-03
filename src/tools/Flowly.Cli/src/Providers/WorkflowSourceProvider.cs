@@ -1,5 +1,5 @@
 ﻿using Flowly.Core.Providers;
-using Flowly.WorkflowSource.Yaml;
+using Flowly.Extensions.Yaml;
 
 namespace Flowly.Cli.Providers
 {

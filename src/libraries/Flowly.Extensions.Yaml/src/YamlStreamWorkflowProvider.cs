@@ -1,10 +1,10 @@
 ﻿using Flowly.Core.Providers;
-using Flowly.WorkflowSource.Yaml.Internal;
+using Flowly.Extensions.Yaml.Internal;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Flowly.WorkflowSource.Yaml
+namespace Flowly.Extensions.Yaml
 {
     public class YamlStreamWorkflowProvider : WorkflowProvider
     {

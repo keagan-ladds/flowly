@@ -1,7 +1,7 @@
 ﻿using NLog;
 using System;
 
-namespace Flowly.Logging.NLog.Internal
+namespace Flowly.Extensions.NLog.Internal
 {
     internal class NLogWrapper : Core.Logging.ILogger
     {
@@ -62,6 +62,6 @@ namespace Flowly.Logging.NLog.Internal
             _loggerInstance.Warn(message, args);
         }
 
-        
+
     }
 }
