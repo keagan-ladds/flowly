@@ -7,7 +7,7 @@ namespace Flowly.Cli.Options
     {
 
         internal static string DefaultApplicationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".flowly");
-        public string? Directory { get; set; }
+        public string? WorkingDirectory { get; set; }
 
         public string? WorkflowFile { get; set; }
 
@@ -43,7 +43,7 @@ namespace Flowly.Cli.Options
                 Workflow = bindingContext.ParseResult.GetValueForOption(_workflowNameOption),
                 PackageSources = bindingContext.ParseResult.GetValueForOption(_sourceOption) ?? Enumerable.Empty<string>(),
                 ApplicationDirectory = bindingContext.ParseResult.GetValueForOption(_appDirOptions)?.FullName ?? WorkflowRunCmdOptions.DefaultApplicationDirectory,
-                Directory = bindingContext.ParseResult.GetValueForOption(_workingDirOption)?.FullName
+                WorkingDirectory = bindingContext.ParseResult.GetValueForOption(_workingDirOption)?.FullName
             };
         }
     }

@@ -27,8 +27,8 @@ namespace Flowly.Cli.Extensions
             builder.WithExtensionSource(nugetExtensionSource);  
             builder.WithRuntimeDependencyResolver(resolver);
 
-            if (!string.IsNullOrEmpty(opts.Directory))
-                builder.SetWorkingDirectory(opts.Directory);
+            if (!string.IsNullOrEmpty(opts.WorkingDirectory))
+                builder.SetWorkingDirectory(opts.WorkingDirectory);
 
             return builder;
         }
