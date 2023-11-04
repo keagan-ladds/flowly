@@ -1,10 +1,9 @@
-﻿using CommandLine;
-using Flowly.Cli.Extensions;
-using Flowly.Cli.Internal;
-using Flowly.Core.Builders;
+﻿using Flowly.Cli.Handlers;
+using Flowly.Cli.Options;
 using Flowly.Core.Logging;
 using Flowly.Extensions.NLog;
 using NLog.Config;
+using System.CommandLine;
 using System.Reflection;
 
 namespace Flowly.Cli
@@ -13,7 +12,7 @@ namespace Flowly.Cli
     {
         static NLogSource loggerSource = new NLogSource();
 
-        static int Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
             var nlogConfigFile = GetEmbeddedResourceStream(Assembly.GetExecutingAssembly(), "NLog.config");
             if (nlogConfigFile != null)
@@ -24,28 +23,34 @@ namespace Flowly.Cli
 
             Logger.LoggerProvider = loggerSource.GetProvider();
 
-            return Parser.Default.ParseArguments<RunnerOptions>(args).MapResult(
-               (RunnerOptions opts) => RunAndReturnExitCode(opts),
-               errs => 1);
+            
+            return await BuildCommandLineParser().InvokeAsync(args);
         }
 
-
-
-        static int RunAndReturnExitCode(RunnerOptions opts)
+        static RootCommand BuildCommandLineParser()
         {
-            var workflow = new WorkflowBuilder()
-                 .FromRunnerOptions(opts)
-                 .Build();
+            var rootCommand = new RootCommand();
+            var verboseOption = new Option<bool>("--verbose", "Enable verbose mode, which provides more detailed output for debugging and troubleshooting purposes.");
+            var appDirOption = new Option<DirectoryInfo>("--appdir");
 
-            var runner = new RunnerBuilder()
-                .FromRunnerOptions(opts)
-                .WithLoggerSource(loggerSource)
-                .Build();
+            var workflowFileOption = new Option<FileInfo>(new string[] { "-f", "--file" });
+            var workflowNameOption = new Option<string>(new string[] { "-w", "--workflow" });
+            var sourceOption = new Option<IEnumerable<string>>(new string[] { "-s", "--source" });
+            var workingDirOption = new Option<DirectoryInfo>(new string[] { "-d", "--working-directory" });
 
-            runner.RunAsync(workflow).Wait();
+            rootCommand.AddGlobalOption(verboseOption);
+            rootCommand.AddGlobalOption(appDirOption);
+            rootCommand.AddOption(workflowFileOption);
+            rootCommand.AddOption(workflowNameOption);
+            rootCommand.AddOption(sourceOption);
+            rootCommand.AddOption(workingDirOption);
 
-            return 0;
+            rootCommand.SetHandler(new WorkflowRunCmdHandler(loggerSource).HandleAsync,
+                new WorkflowRunCmdOptionsBinder(appDirOption, workingDirOption, workflowNameOption, sourceOption, workflowFileOption));
+
+            return rootCommand;
         }
+
 
         public static Stream GetEmbeddedResourceStream(Assembly assembly, string resourceFileName)
         {

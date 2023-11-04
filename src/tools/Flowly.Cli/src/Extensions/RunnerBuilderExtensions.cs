@@ -1,4 +1,5 @@
 ﻿using Flowly.Cli.Internal;
+using Flowly.Cli.Options;
 using Flowly.Core.Builders;
 using Flowly.Extensions.NuGet;
 using NuGet.Configuration;
@@ -7,7 +8,7 @@ namespace Flowly.Cli.Extensions
 {
     internal static class RunnerBuilderExtensions
     {
-        public static RunnerBuilder FromRunnerOptions(this RunnerBuilder builder, RunnerOptions opts)
+        public static RunnerBuilder FromOptions(this RunnerBuilder builder, WorkflowRunCmdOptions opts)
         {
             var packageSources = new List<PackageSource>();
 
@@ -19,7 +20,7 @@ namespace Flowly.Cli.Extensions
             var nugetExtensionSource = new NuGetExtensionSource()
             {
                 PackageSources = packageSources,
-                BaseDirectory = opts.ApplicationFilesDirectory,
+                BaseDirectory = opts.ApplicationDirectory,
             };
             var resolver = new RuntimeDependencyResolver();
 

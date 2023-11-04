@@ -1,9 +1,0 @@
-extensions:
-- package: LaddsTech.DigitalFoundry
-  version: 1.0.0
-variables:
-  Test: ${test}
-steps:
-- name: Step 1
-  type: LaddsTech.DigitalFoundry.ImagePatternV1
-  continueOnError: false
