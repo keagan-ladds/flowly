@@ -15,7 +15,7 @@ pool:
 variables:
   isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/r/')]
   isPr: $[startsWith(variables['Build.SourceBranch'], 'refs/pull')]
-  buildRevision: $[counter(variables['Build.SourceVersion'], 0)]
+  buildRevision: $[counter(variables['Build.SourceBranch'], 0)]
 
 stages:
   - stage: Prepare
@@ -24,6 +24,12 @@ stages:
       pool: 
         vmImage: ubuntu-latest
       steps:
+        - bash: |
+            short_hash=`git rev-parse --short=8 HEAD`
+            echo "##vso[build.updatebuildnumber]1.0.0.$(buildRevision)-dev.$short_hash"
+          workingDirectory: $(Build.SourcesDirectory)
+          displayName: Determine build number
+          condition: and(eq(variables.isRelease, false), eq(variables.isPr, false))
         - bash: |
             str=$(Build.SourceBranch)
             echo $str
@@ -45,15 +51,6 @@ stages:
           workingDirectory: $(Build.SourcesDirectory)
           displayName: Determine PR build number
           condition: eq(variables.isPr, true)
-
-        - bash: |
-            short_hash=`git rev-parse --short=8 HEAD`
-            echo "##vso[build.updatebuildnumber]1.0.0.$(buildRevision)-dev.$short_hash"
-          workingDirectory: $(Build.SourcesDirectory)
-          displayName: Determine build number
-          condition: and(eq(variables.isRelease, false), eq(variables.isPr, false))
-          
-          
 
   - stage: Build
     jobs:
@@ -77,7 +74,7 @@ stages:
       - task: DotNetCoreCLI@2
         inputs:
           command: 'test'
-          projects: '**/libraries/**/*.csproj'
+          projects: '**/libraries/**/test/**/*.csproj'
 
       - task: DotNetCoreCLI@2
         inputs:
@@ -112,7 +109,7 @@ stages:
             
       - task: CopyFiles@2
         inputs:
-          Contents: '**/win-x64/publish/*.exe'
+          Contents: '**/win-x64/publish/*'
           TargetFolder: '$(Build.ArtifactStagingDirectory)/win-x64'
           flattenFolders: true
       - task: PublishBuildArtifacts@1
