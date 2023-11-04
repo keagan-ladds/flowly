@@ -16,6 +16,7 @@ variables:
   isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/r/')]
   isPr: $[startsWith(variables['Build.SourceBranch'], 'refs/pull')]
   buildRevision: $[counter(variables['Build.SourceBranch'], 0)]
+  buildConfiguration: release
 
 stages:
   - stage: Prepare
@@ -69,7 +70,7 @@ stages:
         inputs:
           command: 'build'
           projects: '**/libraries/**/*.csproj'
-          arguments: '/p:Version=$(Build.BuildNumber)'
+          arguments: '/p:Version=$(Build.BuildNumber) --configuration $(buildConfiguration)'
 
       - task: DotNetCoreCLI@2
         inputs:
@@ -103,8 +104,8 @@ stages:
         inputs:
           command: 'publish'
           publishWebProjects: false
-          projects: '**/tools/**/*.csproj'
-          arguments: '-p:PublishSingleFile=true --self-contained true /p:Version=$(Build.BuildNumber)'
+          projects: '**/tools/**/src/**/*.csproj'
+          arguments: '-p:PublishSingleFile=true --self-contained true /p:Version=$(Build.BuildNumber) --configuration $(buildConfiguration)'
           zipAfterPublish: false
             
       - task: CopyFiles@2
