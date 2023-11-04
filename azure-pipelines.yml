@@ -70,7 +70,7 @@ stages:
         inputs:
           command: 'build'
           projects: '**/libraries/**/*.csproj'
-          arguments: '/p:Version=$(Build.BuildNumber)'
+          arguments: '/p:Version=$(Build.BuildNumber) --configuration $(buildConfiguration)'
 
       - task: DotNetCoreCLI@2
         inputs:
