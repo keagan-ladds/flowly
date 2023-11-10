@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Flowly.Core.Internal
@@ -63,7 +64,7 @@ namespace Flowly.Core.Internal
                 Type containedType = instance.GetType().GenericTypeArguments.First();
 
                 if (type.IsList())
-                    return objs.Select(item => Convert.ChangeType(item, type)).ToList();
+                    return objs.Select(item => Convert.ChangeType(item, type, CultureInfo.InvariantCulture)).ToList();
 
                 if (type.IsArray)
                 {
@@ -71,7 +72,7 @@ namespace Flowly.Core.Internal
                     var array = Array.CreateInstance(elementType, objs.Count);
                     for (int i = 0; i < objs.Count; i++)
                     {
-                        var value = Convert.ChangeType(objs[i], elementType);
+                        var value = Convert.ChangeType(objs[i], elementType, CultureInfo.InvariantCulture);
                         array.SetValue(objs[i], i);
                     }
 
@@ -79,7 +80,7 @@ namespace Flowly.Core.Internal
                 }
             }
 
-            return Convert.ChangeType(instance, type);
+            return Convert.ChangeType(instance, type, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
