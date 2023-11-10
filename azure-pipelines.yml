@@ -105,7 +105,7 @@ stages:
           command: 'publish'
           publishWebProjects: false
           projects: '**/tools/**/src/**/*.csproj'
-          arguments: '-p:PublishSingleFile=true --self-contained true /p:Version=$(Build.BuildNumber) --configuration $(buildConfiguration)'
+          arguments: '-p:PublishSingleFile=true --self-contained true /p:Version=$(Build.BuildNumber)'
           zipAfterPublish: false
             
       - task: CopyFiles@2
