@@ -2,7 +2,7 @@
   "profiles": {
     "Flowly.Cli": {
       "commandName": "Project",
-      "commandLineArgs": "-f C:\\Users\\ladds\\test\\workflow-1.yaml -d C:\\Users\\ladds\\test -s C:\\Users\\ladds\\source\\repos\\LaddsTech.DigitalFoundry\\LaddsTech.DigitalFoundry\\bin\\Debug"
+      "commandLineArgs": "-f C:\\Users\\ladds\\test\\workflow-1.yaml -d C:\\Users\\ladds\\test"
     }
   }
 }

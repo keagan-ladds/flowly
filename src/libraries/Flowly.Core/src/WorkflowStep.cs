@@ -64,7 +64,7 @@ namespace Flowly.Core
             throw new StepExecutionException($"The workflow step was cancelled.", true, skip);
         }
 
-        protected string Name => GetType().Name;
+        public string Name => GetType().Name;
 
         /// <summary>
         /// Executes the workflow step internally, handling execution status and exceptions.

@@ -12,7 +12,6 @@
   </PropertyGroup>
 	<PropertyGroup>
 		<PreserveCompilationContext>true</PreserveCompilationContext>
-		<PublishTrimmed>true</PublishTrimmed>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="nlog.config" />

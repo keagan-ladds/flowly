@@ -86,14 +86,15 @@ namespace Flowly.Extensions.NuGet
 
             foreach (var ext in extensions)
             {
+                _logger.Debug("Loading extension {extension}", ext);
                 var packageIdentity = await NuGetExtensionResolver.GetPackageIdentity(ext, sourceCacheContext, logger, repositories, cancellationToken);
-
-
-
+                
                 if (packageIdentity is null)
                 {
                     throw new InvalidOperationException($"Cannot find package {ext.Package}.");
                 }
+
+                _logger.Debug("Resolved {extension} - {version}", packageIdentity.Id, packageIdentity.Version);
 
                 await NuGetExtensionResolver.GetPackageDependencies(packageIdentity, sourceCacheContext, targetFramework, logger, repositories, dependencyContext, allPackages, cancellationToken);
             }
@@ -108,6 +109,7 @@ namespace Flowly.Extensions.NuGet
 
             try
             {
+                _logger.Debug("Downloading required packages.");
                 var downloadResults = await NuGetExtensionResolver.InstallPackages(sourceCacheContext, logger, packagesToInstall, packageDirectory, nugetSettings, cancellationToken);
                 var frameworkReducer = new FrameworkReducer();
                 var framework = NuGetFramework.Parse("net6.0");
@@ -115,6 +117,8 @@ namespace Flowly.Extensions.NuGet
                 foreach (var result in downloadResults)
                 {
                     var package = result.PackageReader.GetIdentity();
+                    _logger.Debug("Processing downloaded package {package}.", package.Id);
+
                     var baseDir = Path.Combine(packageDirectory, $"{package.Id}.{package.Version}");
 
                     var libItems = result.PackageReader.GetLibItems();
@@ -152,6 +156,7 @@ namespace Flowly.Extensions.NuGet
                     var exts = assembly.GetTypes().Where(_ => _.IsSubclassOf(typeof(WorkflowStep))).ToList();
                     foreach (var ext in exts)
                     {
+                        _logger.Debug("Available extension type: {type}", ext.FullName);
                         _availableExtensionTypes.TryAdd(ext.FullName, ext);
                     }
                 }

@@ -101,7 +101,7 @@ namespace Flowly.Core
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error(ex, "An error occurred while .");
+                    _logger.Error(ex, "An error occurred while processing the workflow step {step}.", step.Name);
                     break;
                 }
             }
