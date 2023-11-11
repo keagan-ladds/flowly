@@ -73,7 +73,7 @@ namespace Flowly.Core.Internal
                     for (int i = 0; i < objs.Count; i++)
                     {
                         var value = Convert.ChangeType(objs[i], elementType, CultureInfo.InvariantCulture);
-                        array.SetValue(objs[i], i);
+                        array.SetValue(value, i);
                     }
 
                     return array;
