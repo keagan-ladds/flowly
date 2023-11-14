@@ -47,6 +47,13 @@ namespace Flowly.Core.Internal
 
                         setter.SetValue(destination, array);
                     } 
+                    else if (Type.GetTypeCode(propertyType) == TypeCode.Object && item.Value.GetType().IsAssignableFrom(typeof(Dictionary<object, object>)))
+                    {
+                        var elementValue = Activator.CreateInstance(propertyType);
+                        var nestedObject = ((IDictionary<object, object>)item.Value).ToDictionary(_ => _.Key.ToString(), _ => _.Value);
+                        Map(nestedObject, elementValue);
+                        setter.SetValue(destination, elementValue);
+                    }
                     else
                     {
                         var value = propertyType.ChangeType(item.Value);
