@@ -58,6 +58,11 @@ namespace Flowly.Core.Internal
                 type = Nullable.GetUnderlyingType(type);
             }
 
+            if (type.IsEnum)
+            {
+                return Enum.Parse(type, instance.ToString());
+            }
+
             if (instance.IsList())
             {
                 List<object> objs = ((IEnumerable)instance).Cast<object>().ToList();
