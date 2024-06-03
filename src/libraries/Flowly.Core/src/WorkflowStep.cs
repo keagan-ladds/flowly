@@ -40,6 +40,8 @@ namespace Flowly.Core
         /// </summary>
         public ILogger Logger { get; internal set; } = new NullLogger();
 
+        public ICondition? Condition { get; internal set; }
+
         /// <summary>
         /// Sets the context for the workflow step's execution.
         /// </summary>

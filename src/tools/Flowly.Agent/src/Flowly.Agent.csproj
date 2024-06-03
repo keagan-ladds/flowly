@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PipeMethodCalls" Version="4.0.1" />
+    <PackageReference Include="PipeMethodCalls.MessagePack" Version="3.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\libraries\Flowly.Agent.Protocol\src\Flowly.Agent.Protocol.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.Core\src\Flowly.Core.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.Extensions.Yaml\src\Flowly.Extensions.Yaml.csproj" />
+  </ItemGroup>
+
+</Project>

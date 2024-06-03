@@ -1,4 +1,5 @@
-﻿using Flowly.Core.Providers;
+﻿using Flowly.Core.Internal;
+using Flowly.Core.Providers;
 using System;
 using System.Collections.Generic;
 
@@ -8,6 +9,11 @@ namespace Flowly.Core.Builders
     {
         private readonly List<Action<WorkflowRunner>> _builderActions = new List<Action<WorkflowRunner>>();
 
+
+        public RunnerBuilder()
+        {
+            AddPreprocessAction(TemplatePreprocessor.TemplateProcessorAction);
+        }
         public RunnerBuilder WithExtensionSource(IExtensionSource extensionSource)
         {
             _builderActions.Add(runner => { runner.ExtensionSource = extensionSource; });
@@ -41,6 +47,26 @@ namespace Flowly.Core.Builders
         public RunnerBuilder WithLoggerSource(ILoggerSource loggerSource) 
         {
             _builderActions.Add(runner => { runner.LoggerSource = loggerSource; });
+            return this;
+        }
+
+        public RunnerBuilder AddPreprocessAction(PreprocessAction action)
+        {
+            _builderActions.Add(runner =>
+            {
+                runner.PreprocessActions.Add(action);
+            });
+
+            return this;
+        }
+
+        public RunnerBuilder ClearPreprocessActions()
+        {
+            _builderActions.Add(runner =>
+            {
+                runner.PreprocessActions.Clear();
+            });
+
             return this;
         }
 

@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace Flowly.Core
 {
+    public delegate void PreprocessAction(WorkflowContext context, WorkflowStep step);
+
     /// <summary>
     /// Represents a workflow runner responsible for executing a sequence of steps defined in a workflow.
     /// </summary>
@@ -42,6 +44,10 @@ namespace Flowly.Core
         /// </summary>
         public string WorkingDirectory { get; set; } = Directory.GetCurrentDirectory();
 
+        
+
+        public List<PreprocessAction> PreprocessActions { get; } = new List<PreprocessAction>();
+        
         private readonly ILogger _logger;
 
         public WorkflowRunner()
@@ -97,7 +103,7 @@ namespace Flowly.Core
             {
                 try
                 {
-                    await step.ExecuteInternalAsync();
+                   await ExecuteStepAsync(context, step);
                 }
                 catch (Exception ex)
                 {
@@ -105,6 +111,19 @@ namespace Flowly.Core
                     break;
                 }
             }
+        }
+
+        private async Task ExecuteStepAsync(WorkflowContext context, WorkflowStep step)
+        {
+            PreprocessActions?.ForEach(action => action(context, step));
+
+            if (step.Condition != null && !step.Condition.Evaluate())
+            {
+                _logger.Info("Skipping workflow step {step} as the step condition was not met.", step.Name);
+                return;
+            }
+
+            await step.ExecuteInternalAsync();
         }
 
         private bool ValidateWorkflow(WorkflowDefinition workflow, ITypeResolver typeResolver)

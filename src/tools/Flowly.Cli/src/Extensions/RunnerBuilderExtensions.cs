@@ -12,6 +12,7 @@ namespace Flowly.Cli.Extensions
         {
             var packageSources = new List<PackageSource>();
 
+
             foreach(var source in opts.PackageSources)
             {
                 packageSources.Add(new PackageSource(source));
@@ -29,6 +30,7 @@ namespace Flowly.Cli.Extensions
 
             if (!string.IsNullOrEmpty(opts.WorkingDirectory))
                 builder.SetWorkingDirectory(opts.WorkingDirectory);
+
 
             return builder;
         }

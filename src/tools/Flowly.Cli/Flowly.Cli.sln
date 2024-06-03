@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flowly.Extensions.NuGet", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flowly.Extensions.Yaml", "..\..\libraries\Flowly.Extensions.Yaml\src\Flowly.Extensions.Yaml.csproj", "{AECD8108-6C5B-4D44-8AD4-C1B0DC865F77}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaddsTech.DigitalFoundry", "..\..\..\..\..\laddstech\DigitalFoundry\src\libraries\src\LaddsTech.DigitalFoundry.csproj", "{F44289CF-B9AC-44C5-BCC9-A677B9D3E58D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{AECD8108-6C5B-4D44-8AD4-C1B0DC865F77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AECD8108-6C5B-4D44-8AD4-C1B0DC865F77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AECD8108-6C5B-4D44-8AD4-C1B0DC865F77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F44289CF-B9AC-44C5-BCC9-A677B9D3E58D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F44289CF-B9AC-44C5-BCC9-A677B9D3E58D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F44289CF-B9AC-44C5-BCC9-A677B9D3E58D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F44289CF-B9AC-44C5-BCC9-A677B9D3E58D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

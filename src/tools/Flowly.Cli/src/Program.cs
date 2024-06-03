@@ -2,6 +2,7 @@
 using Flowly.Cli.Options;
 using Flowly.Core.Logging;
 using Flowly.Extensions.NLog;
+using LaddsTech.DigitalFoundry;
 using NLog.Config;
 using System.CommandLine;
 using System.Reflection;
@@ -22,7 +23,7 @@ namespace Flowly.Cli
             }
 
             Logger.LoggerProvider = loggerSource.GetProvider();
-
+            var t = new ImageComposeV1();
             
             return await BuildCommandLineParser().InvokeAsync(args);
         }
@@ -41,6 +42,8 @@ namespace Flowly.Cli
             var workflowNameOption = new Option<string>(new string[] { "-w", "--workflow" });
             var sourceOption = new Option<IEnumerable<string>>(new string[] { "-s", "--source" });
             var workingDirOption = new Option<DirectoryInfo>(new string[] { "-d", "--working-directory" });
+            var includeStepOptions = new Option<IEnumerable<string>>(new string[] { "--step" });
+            var skipStepOptions = new Option<IEnumerable<string>>(new string[] { "--skip-step" });
 
             rootCommand.AddGlobalOption(verboseOption);
             rootCommand.AddGlobalOption(appDirOption);
@@ -48,6 +51,8 @@ namespace Flowly.Cli
             rootCommand.AddOption(workflowNameOption);
             rootCommand.AddOption(sourceOption);
             rootCommand.AddOption(workingDirOption);
+            rootCommand.AddOption(skipStepOptions);
+            rootCommand.AddOption(includeStepOptions);
             rootCommand.AddValidator((context) =>
             {
                 var workflowFile = context.GetValueForOption(workflowFileOption);
@@ -58,7 +63,7 @@ namespace Flowly.Cli
             });
 
             rootCommand.SetHandler(new WorkflowRunCmdHandler(loggerSource).HandleAsync,
-                new WorkflowRunCmdOptionsBinder(appDirOption, workingDirOption, workflowNameOption, sourceOption, workflowFileOption));
+                new WorkflowRunCmdOptionsBinder(appDirOption, workingDirOption, workflowNameOption, sourceOption, workflowFileOption, skipStepOptions, includeStepOptions));
 
             return rootCommand;
         }

@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+service AgentService {
+	rpc ServerStreamServerEvents(AgentEventRequest) returns (stream AgentEvent) {}
+}
+
+message AgentEventRequest {
+
+}
+
+message AgentEvent {
+	google.protobuf.Timestamp time = 1;
+	AgentEventType type = 2;
+	optional LifecyleEventData lifecyle_data = 3;
+	optional LogEventData log_data = 4;
+}
+
+message LogEventData {
+	Severity severity = 1;
+	string message = 2;
+	map<string, string> context = 3;
+
+
+	enum Severity {
+		Trace = 0;
+		Debug = 1;
+		Info = 2;
+		Warn = 3;
+		Error = 4;
+		Critical = 5;
+	}
+}
+
+message LifecyleEventData {
+
+}
+
+
+
+enum AgentEventType {
+	LifecyleEvent = 0;
+	LogEvent = 1;
+}

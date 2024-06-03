@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>flowly-worker</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="5.2.5" />
+    <PackageReference Include="PipeMethodCalls" Version="4.0.1" />
+    <PackageReference Include="PipeMethodCalls.MessagePack" Version="3.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\libraries\Flowly.Agent.Protocol\src\Flowly.Agent.Protocol.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.Core\src\Flowly.Core.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.Extensions.NLog\src\Flowly.Extensions.NLog.csproj" />
+    <ProjectReference Include="..\..\..\libraries\Flowly.Extensions.NuGet\src\Flowly.Extensions.NuGet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

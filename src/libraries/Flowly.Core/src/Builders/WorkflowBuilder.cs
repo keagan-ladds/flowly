@@ -3,6 +3,7 @@ using Flowly.Core.Providers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Flowly.Core.Builders
 {
@@ -12,6 +13,11 @@ namespace Flowly.Core.Builders
         private IWorkflowSource? _workflowSource;
 
         public ILoggerProvider? LoggerProvider { get; private set; }
+
+        public WorkflowBuilder()
+        {
+            
+        }
 
         public WorkflowBuilder SetVariable(string name, object value)
         {
