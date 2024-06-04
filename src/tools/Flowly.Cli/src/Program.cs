@@ -2,7 +2,6 @@
 using Flowly.Cli.Options;
 using Flowly.Core.Logging;
 using Flowly.Extensions.NLog;
-using LaddsTech.DigitalFoundry;
 using NLog.Config;
 using System.CommandLine;
 using System.Reflection;
@@ -23,7 +22,6 @@ namespace Flowly.Cli
             }
 
             Logger.LoggerProvider = loggerSource.GetProvider();
-            var t = new ImageComposeV1();
             
             return await BuildCommandLineParser().InvokeAsync(args);
         }

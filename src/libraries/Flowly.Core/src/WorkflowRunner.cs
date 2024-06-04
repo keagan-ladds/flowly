@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace Flowly.Core
 {
     public delegate void PreprocessAction(WorkflowContext context, WorkflowStep step);
+    public delegate void WorkflowStepDefinitionPreProcessAction(WorkflowContext context, WorkflowStepDefinition definition);
 
     /// <summary>
     /// Represents a workflow runner responsible for executing a sequence of steps defined in a workflow.
@@ -44,9 +45,8 @@ namespace Flowly.Core
         /// </summary>
         public string WorkingDirectory { get; set; } = Directory.GetCurrentDirectory();
 
-        
-
         public List<PreprocessAction> PreprocessActions { get; } = new List<PreprocessAction>();
+        public List<WorkflowStepDefinitionPreProcessAction> WorkflowStepDefinitionPreProcessActions { get; } = new List<WorkflowStepDefinitionPreProcessAction>();
         
         private readonly ILogger _logger;
 
@@ -91,6 +91,8 @@ namespace Flowly.Core
 
             foreach (var step in workflow.Steps)
             {
+                WorkflowStepDefinitionPreProcessActions?.ForEach(action => action(context, step));
+
                 var stepInstance = stepFactory.CreateInstance(step, typeResolver);
                 stepInstance.Variables = new WorkflowVariables(step.Variables);
                 stepInstance.ContinueOnError = step.ContinueOnError;

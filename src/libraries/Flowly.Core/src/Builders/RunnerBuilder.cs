@@ -13,6 +13,7 @@ namespace Flowly.Core.Builders
         public RunnerBuilder()
         {
             AddPreprocessAction(TemplatePreprocessor.TemplateProcessorAction);
+            AddPreprocessAction(TemplatePreprocessor.WorkflowStepDefinitionPreProcessAction);
         }
         public RunnerBuilder WithExtensionSource(IExtensionSource extensionSource)
         {
@@ -55,6 +56,16 @@ namespace Flowly.Core.Builders
             _builderActions.Add(runner =>
             {
                 runner.PreprocessActions.Add(action);
+            });
+
+            return this;
+        }
+
+        public RunnerBuilder AddPreprocessAction(WorkflowStepDefinitionPreProcessAction action)
+        {
+            _builderActions.Add(runner =>
+            {
+                runner.WorkflowStepDefinitionPreProcessActions.Add(action);
             });
 
             return this;
