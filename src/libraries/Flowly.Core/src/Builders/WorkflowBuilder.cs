@@ -3,7 +3,6 @@ using Flowly.Core.Providers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Flowly.Core.Builders
 {
@@ -27,6 +26,16 @@ namespace Flowly.Core.Builders
                     workflow.Variables[name] = value;
             });
             
+            return this;
+        }
+
+        public WorkflowBuilder SetVariables(IEnumerable<KeyValuePair<string, object>> variables)
+        {
+            foreach (var variable in variables)
+            {
+                SetVariable(variable.Key, variable.Value);
+            }
+
             return this;
         }
 

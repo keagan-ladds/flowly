@@ -6,8 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>flowly-cli</AssemblyName>
-	<PublishSingleFile>true</PublishSingleFile>
-	<SelfContained>true</SelfContained>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 	<PropertyGroup>
@@ -27,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\laddstech\DigitalFoundry\src\libraries\src\LaddsTech.DigitalFoundry.csproj" />
     <ProjectReference Include="..\..\..\libraries\Flowly.Extensions.NuGet\src\Flowly.Extensions.NuGet.csproj" />
     <ProjectReference Include="..\..\..\libraries\Flowly.Extensions.NLog\src\Flowly.Extensions.NLog.csproj" />
     <ProjectReference Include="..\..\..\libraries\Flowly.Extensions.Yaml\src\Flowly.Extensions.Yaml.csproj" />

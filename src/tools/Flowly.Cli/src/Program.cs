@@ -42,6 +42,7 @@ namespace Flowly.Cli
             var workingDirOption = new Option<DirectoryInfo>(new string[] { "-d", "--working-directory" });
             var includeStepOptions = new Option<IEnumerable<string>>(new string[] { "--step" });
             var skipStepOptions = new Option<IEnumerable<string>>(new string[] { "--skip-step" });
+            var setVariableOptions = new Option<IEnumerable<string>>(new string[] { "--set-var" });
 
             rootCommand.AddGlobalOption(verboseOption);
             rootCommand.AddGlobalOption(appDirOption);
@@ -51,6 +52,7 @@ namespace Flowly.Cli
             rootCommand.AddOption(workingDirOption);
             rootCommand.AddOption(skipStepOptions);
             rootCommand.AddOption(includeStepOptions);
+            rootCommand.AddOption(setVariableOptions);
             rootCommand.AddValidator((context) =>
             {
                 var workflowFile = context.GetValueForOption(workflowFileOption);
@@ -61,7 +63,7 @@ namespace Flowly.Cli
             });
 
             rootCommand.SetHandler(new WorkflowRunCmdHandler(loggerSource).HandleAsync,
-                new WorkflowRunCmdOptionsBinder(appDirOption, workingDirOption, workflowNameOption, sourceOption, workflowFileOption, skipStepOptions, includeStepOptions));
+                new WorkflowRunCmdOptionsBinder(appDirOption, workingDirOption, workflowNameOption, sourceOption, workflowFileOption, skipStepOptions, includeStepOptions, setVariableOptions));
 
             return rootCommand;
         }

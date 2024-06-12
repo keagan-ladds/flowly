@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Dynamic;
-using System.Text;
-using Flowly.Core.Definitions;
+﻿using Flowly.Core.Definitions;
 using Scriban;
 using Scriban.Parsing;
 using Scriban.Runtime;
+using System;
+using System.Collections.Generic;
 
 namespace Flowly.Core.Internal
 {
@@ -100,8 +97,7 @@ namespace Flowly.Core.Internal
                     variables[variable.Key] = result;   
                 }
             }
-            
-            
+           
         }
     }
 }

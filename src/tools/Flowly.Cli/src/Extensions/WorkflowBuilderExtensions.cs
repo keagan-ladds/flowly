@@ -18,6 +18,11 @@ namespace Flowly.Cli.Extensions
                 var sourceProvider = new WorkflowSourceProvider(opts.ApplicationDirectory);
                 builder.WithSource(sourceProvider.GetSource(opts.Workflow));
             }
+
+            if (opts.Variables.Any())
+            {
+                builder.SetVariables(opts.Variables);
+            }
             
             return builder;
         }
